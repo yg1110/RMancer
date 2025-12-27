@@ -1,15 +1,15 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { Geist, Geist_Mono } from 'next/font/google';
+import Providers from '@/config/providers';
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <Providers>{children}</Providers>
+      </body>
     </html>
   );
 }
