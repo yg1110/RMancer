@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: rmancer
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: rmancer
+      POSTGRES_PASSWORD: rmancer
+      POSTGRES_DB: rmancer
+    volumes:
+      - rmancer_pgdata:/var/lib/postgresql/data
+
+volumes:
+  rmancer_pgdata:
