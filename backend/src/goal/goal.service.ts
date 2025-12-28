@@ -36,18 +36,12 @@ export class GoalProfileService {
     return goalProfile;
   }
 
-  async findOne(userId: string): Promise<GoalProfileResponseDto> {
+  async findOne(userId: string): Promise<GoalProfileResponseDto | null> {
     const goalProfile = await this.prisma.goalProfile.findUnique({
       where: {
         userId,
       },
     });
-
-    if (!goalProfile) {
-      throw new NotFoundException(
-        GOAL_PROFILE_ERROR_MESSAGE.GOAL_PROFILE_NOT_FOUND,
-      );
-    }
 
     return goalProfile;
   }

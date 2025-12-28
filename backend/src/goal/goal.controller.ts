@@ -73,7 +73,7 @@ export class GoalProfileController {
   })
   async findOne(
     @Request() req: Express.Request,
-  ): Promise<GoalProfileResponseDto> {
+  ): Promise<GoalProfileResponseDto | null> {
     const userId = req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);

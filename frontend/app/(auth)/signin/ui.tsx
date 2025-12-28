@@ -23,7 +23,7 @@ export default function SigninUI() {
     if (result?.error) {
       alert(result.error);
     } else {
-      router.replace('/');
+      router.replace('/dashboard');
     }
   };
 
