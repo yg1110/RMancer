@@ -55,6 +55,7 @@ model User {
   accounts Account[]
   sessions Session[]
   inbodies InbodyRecord[]
+  oneRms OneRmRecord[]
   profile  GoalProfile?
   routines Routine[]
 
@@ -112,6 +113,31 @@ model GoalProfile {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@map("goal_profiles")
+}
+
+enum OneRmLift {
+  BENCH_PRESS
+  BACK_SQUAT
+  DEADLIFT
+  OVERHEAD_PRESS
+}
+
+model OneRmRecord {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+
+  lift      OneRmLift
+
+  oneRmKg   Float     @map("one_rm_kg")
+
+  measuredAt DateTime @default(now()) @map("measured_at")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, lift, measuredAt])
+  @@map("one_rm_records")
 }
 
 model Routine {
