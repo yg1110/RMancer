@@ -54,8 +54,10 @@ model User {
 
   accounts Account[]
   sessions Session[]
+  inbodies InbodyRecord[]
 
   @@map("users")
+
 }
 
 model VerificationToken {
@@ -65,4 +67,22 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+model InbodyRecord {
+  id               String   @id @default(cuid())
+  userId           String   @map("user_id")
+
+  measuredAt       DateTime @map("measured_at")
+  heightCm         Float    @map("height_cm")
+  weightKg         Float    @map("weight_kg")
+  skeletalMuscleKg Float    @map("skeletal_muscle_kg")
+  bodyFatKg        Float    @map("body_fat_kg")
+  bodyFatPct       Float    @map("body_fat_pct")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, measuredAt])
+  @@map("inbody_records")
 }
