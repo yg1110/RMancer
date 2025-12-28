@@ -4,6 +4,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { InbodyModule } from './inbody/inbody.module';
 import { GoalProfileModule } from './goal/goal.module';
+import { RoutineModule } from './routine/routine.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { GoalProfileModule } from './goal/goal.module';
     PrismaModule,
     InbodyModule,
     GoalProfileModule,
+    RoutineModule,
   ],
   controllers: [],
   providers: [],

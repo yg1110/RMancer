@@ -56,6 +56,7 @@ model User {
   sessions Session[]
   inbodies InbodyRecord[]
   profile  GoalProfile?
+  routines Routine[]
 
   @@map("users")
 
@@ -113,3 +114,69 @@ model GoalProfile {
   @@map("goal_profiles")
 }
 
+model Routine {
+  id              String          @id @default(cuid())
+  userId          String          @map("user_id")
+  title           String
+  goalType        GoalType        @map("goal_type")
+  experienceLevel ExperienceLevel @map("experience_level")
+  weeklyFrequency Int             @map("weekly_frequency")
+  planWeeks       Int             @map("plan_weeks")
+  sourceVersion   String          @map("source_version")
+  createdAt       DateTime        @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  days RoutineDay[]
+
+  @@index([userId, createdAt])
+  @@map("routines")
+}
+
+model RoutineDay {
+  id        String @id @default(cuid())
+
+  routineId String @map("routine_id")
+  dayIndex  Int    @map("day_index")
+  name      String
+  routine   Routine          @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercises RoutineExercise[]
+  logs      RoutineLog[]
+
+  @@index([routineId, dayIndex])
+
+  @@map("routine_days")
+}
+
+model RoutineExercise {
+  id           String @id @default(cuid())
+
+  routineDayId String @map("routine_day_id")
+  order        Int
+  exerciseKey  String @map("exercise_key")
+  displayName  String @map("display_name")
+  sets         Int
+  repsMin      Int    @map("reps_min")
+  repsMax      Int    @map("reps_max")
+  restSec      Int    @map("rest_sec")
+  rirMin       Int    @map("rir_min")
+  rirMax       Int    @map("rir_max")
+  memo         String?
+
+  day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId, order])
+  @@map("routine_exercises")
+}
+
+model RoutineLog {
+  id           String   @id @default(cuid())
+  routineDayId String   @map("routine_day_id")
+  date         DateTime
+  isCompleted  Boolean  @default(false) @map("is_completed")
+  completedAt  DateTime? @map("completed_at")
+
+  day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+
+  @@unique([routineDayId, date])
+  @@map("routine_logs")
+}
