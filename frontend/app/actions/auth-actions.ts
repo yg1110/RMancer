@@ -6,9 +6,11 @@ import { prisma } from '@/prisma';
 export async function signUp({
   email,
   password,
+  name,
 }: {
   email: string;
   password: string;
+  name: string;
 }) {
   try {
     const existingUser = await prisma.user.findUnique({
@@ -25,6 +27,7 @@ export async function signUp({
       data: {
         email,
         hashedPassword: saltAndHashPassword(password),
+        name,
       },
     });
 
