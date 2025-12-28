@@ -55,6 +55,7 @@ model User {
   accounts Account[]
   sessions Session[]
   inbodies InbodyRecord[]
+  profile  GoalProfile?
 
   @@map("users")
 
@@ -86,3 +87,29 @@ model InbodyRecord {
   @@index([userId, measuredAt])
   @@map("inbody_records")
 }
+
+enum GoalType {
+  MUSCLE_GAIN
+  FAT_LOSS
+}
+
+enum ExperienceLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+model GoalProfile {
+  id               String          @id @default(cuid())
+  userId           String          @unique @map("user_id")
+  goalType         GoalType        @map("goal_type")
+  experienceLevel  ExperienceLevel @map("experience_level")
+  weeklyFrequency  Int             @map("weekly_frequency")
+  defaultPlanWeeks Int             @default(4) @map("default_plan_weeks")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("goal_profiles")
+}
+

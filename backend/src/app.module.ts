@@ -3,6 +3,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { InbodyModule } from './inbody/inbody.module';
+import { GoalProfileModule } from './goal/goal.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { InbodyModule } from './inbody/inbody.module';
     AuthModule,
     PrismaModule,
     InbodyModule,
+    GoalProfileModule,
   ],
   controllers: [],
   providers: [],
