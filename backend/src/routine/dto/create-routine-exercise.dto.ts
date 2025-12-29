@@ -1,5 +1,14 @@
-import { IsString, IsInt, IsOptional, Min } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsOptional,
+  Min,
+  IsNumber,
+  Max,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { OneRmLift } from '@prisma/client';
 
 export class CreateRoutineExerciseDto {
   @ApiProperty({
@@ -72,6 +81,31 @@ export class CreateRoutineExerciseDto {
   @Min(0)
   rirMax: number;
 
+  @ApiProperty({
+    description: '% 범위(min)',
+    example: 0.65,
+  })
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  pctMin: number;
+
+  @ApiProperty({
+    description: '% 범위(max)',
+    example: 0.75,
+  })
+  @IsNumber()
+  @Min(0)
+  @Max(1)
+  pctMax: number;
+
+  @ApiProperty({
+    description: 'OneRM 리프트',
+    example: 'BACK_SQUAT',
+  })
+  @IsEnum(OneRmLift)
+  anchorLift: OneRmLift;
+
   @ApiPropertyOptional({
     description: '안내 문구(선택)',
     example: '가슴 중앙에 집중',
@@ -80,4 +114,3 @@ export class CreateRoutineExerciseDto {
   @IsString()
   memo?: string;
 }
-

@@ -6,10 +6,16 @@ import { RoutineResponseDto } from './dto/routine-response.dto';
 import { CreateRoutineLogDto } from './dto/create-routine-log.dto';
 import { RoutineLogResponseDto } from './dto/routine-log-response.dto';
 import { ROUTINE_ERROR_MESSAGE } from './routine.constants';
+import { RoutineEngine } from './engine/routine-engine';
+import { ExperienceLevel, GoalType, OneRmLift } from '@prisma/client';
+import { buildLatestOneRmMapWithFallback } from './engine/one-rm.util';
 
 @Injectable()
 export class RoutineService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly routineEngine: RoutineEngine,
+  ) {}
 
   async create(
     userId: string,
@@ -39,6 +45,9 @@ export class RoutineService {
                 restSec: exercise.restSec,
                 rirMin: exercise.rirMin,
                 rirMax: exercise.rirMax,
+                anchorLift: exercise.anchorLift,
+                pctMin: exercise.pctMin,
+                pctMax: exercise.pctMax,
                 memo: exercise.memo,
               })),
             },
@@ -292,5 +301,75 @@ export class RoutineService {
         },
       },
     });
+  }
+
+  async createRecommended(userId: string): Promise<RoutineResponseDto> {
+    // 1) GoalProfile 조회
+    const profile = await this.prisma.goalProfile.findUnique({
+      where: { userId },
+    });
+
+    const goalType: GoalType = profile?.goalType ?? GoalType.MUSCLE_GAIN;
+    const planWeeks = profile?.defaultPlanWeeks ?? 4;
+    const freqRaw = profile?.weeklyFrequency ?? 3;
+    const weeklyFrequency = ([3, 4, 5, 6].includes(freqRaw) ? freqRaw : 3) as
+      | 3
+      | 4
+      | 5
+      | 6;
+
+    // 2) 1RM 조회(없어도 OK) → 누락은 0으로 채움
+    const oneRmRecords = await this.prisma.oneRmRecord.findMany({
+      where: { userId },
+      orderBy: { measuredAt: 'desc' },
+    });
+    const { oneRmMap, missing } = buildLatestOneRmMapWithFallback(
+      oneRmRecords,
+      0,
+    );
+
+    // 3) 데이터가 부족하면 “완전 초보”로 강제
+    // - 기준: 4대 1RM 중 하나라도 0이면 초보 루틴으로 단순화
+    const forceBeginner = missing.length > 0;
+
+    const experienceLevel: ExperienceLevel = forceBeginner
+      ? ExperienceLevel.BEGINNER
+      : (profile?.experienceLevel ?? ExperienceLevel.BEGINNER);
+
+    const finalWeeklyFrequency: 3 | 4 | 5 | 6 = forceBeginner
+      ? 3
+      : weeklyFrequency;
+
+    const title = forceBeginner
+      ? '추천 루틴 (초보/데이터 미입력)'
+      : '추천 루틴';
+    const sourceVersion = forceBeginner ? 'rules-v1.0-fallback' : 'rules-v1.0';
+
+    // 4) 엔진으로 dto 생성
+    const dto = this.routineEngine.generate({
+      title,
+      goalType,
+      experienceLevel,
+      weeklyFrequency: finalWeeklyFrequency,
+      planWeeks,
+      sourceVersion,
+      oneRmMap,
+      randomizeExercisePick: false,
+    }) as CreateRoutineDto;
+
+    // 5) 누락된 1RM이 있는 anchorLift는 memo로 표시(선택이지만 UX 좋아짐)
+    //    - 1RM=0이면 화면 중량은 0이 될 수 있으니, %만 참고하도록 안내
+    const missingSet = new Set<OneRmLift>(missing);
+    for (const day of dto.days) {
+      for (const ex of day.exercises) {
+        if (missingSet.has(ex.anchorLift)) {
+          ex.memo =
+            '1RM 미입력(0) 상태입니다. 중량은 계산되지 않으며 %1RM 기준으로만 진행하세요. 1RM 입력 시 중량이 계산됩니다.';
+        }
+      }
+    }
+
+    // 6) 기존 create 재사용하여 저장
+    return this.create(userId, dto);
   }
 }

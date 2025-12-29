@@ -187,7 +187,10 @@ model RoutineExercise {
   rirMin       Int    @map("rir_min")
   rirMax       Int    @map("rir_max")
   memo         String?
+  pctMin       Float     @map("pct_min")
+  pctMax       Float     @map("pct_max")
 
+  anchorLift   OneRmLift @map("anchor_lift")
   day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
 
   @@index([routineDayId, order])

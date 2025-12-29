@@ -113,26 +113,30 @@ export default function DashboardUI() {
       weeklyFrequency: 4,
       defaultPlanWeeks: 1,
     });
-    // const inbodyRecord = createInbodyRecordMutation.mutate({
-    //   measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
-    //   heightCm: inBody.heightCm,
-    //   weightKg: inBody.weightKg,
-    //   skeletalMuscleKg: inBody.skeletalMuscleKg,
-    //   bodyFatKg: inBody.bodyFatKg,
-    //   bodyFatPct: inBody.bodyFatPct,
-    // });
-    // const benchPress = createOneRmRecordMutation.mutate({
-    //   lift: 'BENCH_PRESS',
-    //   oneRmKg: finalRM.benchPress,
-    // });
-    // const deadlift = createOneRmRecordMutation.mutate({
-    //   lift: 'DEADLIFT',
-    //   oneRmKg: finalRM.deadlift,
-    // });
-    // const overheadPress = createOneRmRecordMutation.mutate({
-    //   lift: 'OVERHEAD_PRESS',
-    //   oneRmKg: finalRM.overheadPress,
-    // });
+    const inbodyRecord = createInbodyRecordMutation.mutate({
+      measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+      heightCm: inBody.heightCm,
+      weightKg: inBody.weightKg,
+      skeletalMuscleKg: inBody.skeletalMuscleKg,
+      bodyFatKg: inBody.bodyFatKg,
+      bodyFatPct: inBody.bodyFatPct,
+    });
+    const benchPress = createOneRmRecordMutation.mutate({
+      lift: 'BENCH_PRESS',
+      oneRmKg: finalRM.benchPress,
+    });
+    const deadlift = createOneRmRecordMutation.mutate({
+      lift: 'DEADLIFT',
+      oneRmKg: finalRM.deadlift,
+    });
+    const overheadPress = createOneRmRecordMutation.mutate({
+      lift: 'OVERHEAD_PRESS',
+      oneRmKg: finalRM.overheadPress,
+    });
+    const squat = createOneRmRecordMutation.mutate({
+      lift: 'BACK_SQUAT',
+      oneRmKg: finalRM.squat,
+    });
     console.log('goalProfile', goalProfile);
     // navigate('/recommendation');
   };

@@ -248,5 +248,28 @@ export class RoutineController {
     }
     return this.routineService.removeLog(dayId, date, userId);
   }
-}
 
+  @Post('recommended')
+  @ApiOperation({
+    summary: '추천 루틴 생성',
+    description:
+      '사용자의 GoalProfile(목표/경력/주당빈도)와 최신 1RM 데이터를 기반으로 추천 루틴을 생성합니다.',
+  })
+  @ApiResponse({
+    status: 201,
+    type: RoutineResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: ERROR_MESSAGE.UNAUTHORIZED,
+  })
+  async createRecommended(
+    @Request() req: Express.Request,
+  ): Promise<RoutineResponseDto> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
+    }
+    return this.routineService.createRecommended(userId);
+  }
+}
