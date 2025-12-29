@@ -1,8 +1,18 @@
 'use client';
 
-import { Flame, CheckCircle2, ChevronRight, BicepsFlexed } from 'lucide-react';
+import {
+  Flame,
+  CheckCircle2,
+  ChevronRight,
+  BicepsFlexed,
+  Calendar,
+  Sprout,
+  Activity,
+  Trophy,
+} from 'lucide-react';
 import { GoalTypeData, ExperienceLevelData } from '@/types/dashboard';
 import {
+  ExperienceLevel,
   ExperienceLevelDescription,
   ExperienceLevelLabel,
   GoalTypeLabel,
@@ -12,15 +22,28 @@ interface Step1Props {
   prefs: {
     goal: GoalTypeData;
     experience: ExperienceLevelData;
+    weeklyFrequency: number;
   };
   setPrefs: React.Dispatch<
     React.SetStateAction<{
       goal: GoalTypeData;
       experience: ExperienceLevelData;
+      weeklyFrequency: number;
     }>
   >;
   onNext: () => void;
 }
+
+const getExperienceIcon = (level: ExperienceLevel) => {
+  switch (level) {
+    case 'BEGINNER':
+      return <Sprout className="w-6 h-6" />;
+    case 'INTERMEDIATE':
+      return <Activity className="w-6 h-6" />;
+    case 'ADVANCED':
+      return <Trophy className="w-6 h-6" />;
+  }
+};
 
 export default function Step1({ prefs, setPrefs, onNext }: Step1Props) {
   return (
@@ -52,6 +75,24 @@ export default function Step1({ prefs, setPrefs, onNext }: Step1Props) {
       </section>
 
       <section>
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar className="w-5 h-5 text-indigo-600" />
+          <h3 className="text-lg font-bold text-slate-800">주당 운동 횟수</h3>
+        </div>
+        <div className="grid grid-cols-4 gap-2">
+          {[3, 4, 5, 6].map(freq => (
+            <button
+              key={freq}
+              onClick={() => setPrefs(p => ({ ...p, weeklyFrequency: freq }))}
+              className={`py-4 rounded-2xl border-2 font-bold transition-all ${prefs.weeklyFrequency === freq ? 'border-indigo-600 bg-indigo-600 text-white shadow-lg' : 'border-slate-100 bg-white text-slate-400 hover:bg-slate-50'}`}
+            >
+              {freq}일
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section>
         <h3 className="text-lg font-bold text-slate-800 mb-4">
           운동 경력은 어느 정도인가요?
         </h3>
@@ -62,13 +103,20 @@ export default function Step1({ prefs, setPrefs, onNext }: Step1Props) {
             <button
               key={l}
               onClick={() => setPrefs(p => ({ ...p, experience: l }))}
-              className={`w-full p-4 rounded-2xl border-2 transition-all flex items-center justify-between px-6 ${prefs.experience === l ? 'border-indigo-600 bg-indigo-50' : 'border-slate-100 bg-white opacity-60'}`}
+              className={`w-full p-5 rounded-[2rem] border-2 transition-all flex items-center gap-5 px-6 ${prefs.experience === l ? 'border-indigo-600 bg-indigo-50' : 'border-slate-100 bg-white opacity-60'}`}
             >
-              <div className="text-left">
-                <p className="font-bold text-slate-800">
+              <div
+                className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${prefs.experience === l ? 'bg-indigo-600 text-white shadow-md' : 'bg-slate-100 text-slate-400'}`}
+              >
+                {getExperienceIcon(l)}
+              </div>
+              <div className="flex-1 text-left">
+                <p
+                  className={`font-bold ${prefs.experience === l ? 'text-slate-900' : 'text-slate-600'}`}
+                >
                   {ExperienceLevelLabel[l]}
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-[11px] text-slate-500 font-medium">
                   {ExperienceLevelDescription[l]}
                 </p>
               </div>

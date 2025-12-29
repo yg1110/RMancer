@@ -208,6 +208,18 @@ export type CreateRoutineExerciseDto = {
      */
     rirMax: number;
     /**
+     * % 범위(min)
+     */
+    pctMin: number;
+    /**
+     * % 범위(max)
+     */
+    pctMax: number;
+    /**
+     * OneRM 리프트
+     */
+    anchorLift: string;
+    /**
      * 안내 문구(선택)
      */
     memo?: string;
@@ -304,6 +316,14 @@ export type RoutineExerciseResponseDto = {
      * RIR 범위(max)
      */
     rirMax: number;
+    /**
+     * % 범위(min)
+     */
+    pctMin: number;
+    /**
+     * % 범위(max)
+     */
+    pctMax: number;
     /**
      * 안내 문구(선택)
      */
@@ -496,6 +516,21 @@ export type UpdateOneRmRecordDto = {
      * 측정일/입력 기준일 (정렬/최신 조회의 기준)
      */
     measuredAt?: string;
+};
+
+export type DashboardResponseDto = {
+    /**
+     * 가장 최근 목표 프로필
+     */
+    latestGoal: GoalProfileResponseDto | null;
+    /**
+     * 가장 최근 인바디 기록
+     */
+    latestInbody: InbodyRecordResponseDto | null;
+    /**
+     * 가장 최근 1RM 기록
+     */
+    latestOneRm: OneRmRecordResponseDto | null;
 };
 
 export type InbodyControllerFindAllData = {
@@ -750,6 +785,30 @@ export type RoutineControllerCreateResponses = {
 
 export type RoutineControllerCreateResponse = RoutineControllerCreateResponses[keyof RoutineControllerCreateResponses];
 
+export type RoutineControllerGetLatestRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines/latest';
+};
+
+export type RoutineControllerGetLatestRoutineErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+    /**
+     * 루틴을 찾을 수 없습니다
+     */
+    404: unknown;
+};
+
+export type RoutineControllerGetLatestRoutineResponses = {
+    200: RoutineResponseDto;
+};
+
+export type RoutineControllerGetLatestRoutineResponse = RoutineControllerGetLatestRoutineResponses[keyof RoutineControllerGetLatestRoutineResponses];
+
 export type RoutineControllerRemoveData = {
     body?: never;
     path: {
@@ -906,6 +965,26 @@ export type RoutineControllerRemoveLogResponses = {
     200: unknown;
 };
 
+export type RoutineControllerCreateRecommendedData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines/recommended';
+};
+
+export type RoutineControllerCreateRecommendedErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+};
+
+export type RoutineControllerCreateRecommendedResponses = {
+    201: RoutineResponseDto;
+};
+
+export type RoutineControllerCreateRecommendedResponse = RoutineControllerCreateRecommendedResponses[keyof RoutineControllerCreateRecommendedResponses];
+
 export type OneRmControllerFindAllData = {
     body?: never;
     path?: never;
@@ -1029,3 +1108,23 @@ export type OneRmControllerUpdateResponses = {
 };
 
 export type OneRmControllerUpdateResponse = OneRmControllerUpdateResponses[keyof OneRmControllerUpdateResponses];
+
+export type DashboardControllerGetLatestDataData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/dashboard';
+};
+
+export type DashboardControllerGetLatestDataErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+};
+
+export type DashboardControllerGetLatestDataResponses = {
+    200: DashboardResponseDto;
+};
+
+export type DashboardControllerGetLatestDataResponse = DashboardControllerGetLatestDataResponses[keyof DashboardControllerGetLatestDataResponses];

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GoalProfileControllerCreateData, GoalProfileControllerCreateErrors, GoalProfileControllerCreateResponses, GoalProfileControllerFindOneData, GoalProfileControllerFindOneErrors, GoalProfileControllerFindOneResponses, GoalProfileControllerRemoveData, GoalProfileControllerRemoveErrors, GoalProfileControllerRemoveResponses, GoalProfileControllerUpdateData, GoalProfileControllerUpdateErrors, GoalProfileControllerUpdateResponses, InbodyControllerCreateData, InbodyControllerCreateErrors, InbodyControllerCreateResponses, InbodyControllerFindAllData, InbodyControllerFindAllErrors, InbodyControllerFindAllResponses, InbodyControllerFindOneData, InbodyControllerFindOneErrors, InbodyControllerFindOneResponses, InbodyControllerRemoveData, InbodyControllerRemoveErrors, InbodyControllerRemoveResponses, InbodyControllerUpdateData, InbodyControllerUpdateErrors, InbodyControllerUpdateResponses, OneRmControllerCreateData, OneRmControllerCreateErrors, OneRmControllerCreateResponses, OneRmControllerFindAllData, OneRmControllerFindAllErrors, OneRmControllerFindAllResponses, OneRmControllerFindOneData, OneRmControllerFindOneErrors, OneRmControllerFindOneResponses, OneRmControllerRemoveData, OneRmControllerRemoveErrors, OneRmControllerRemoveResponses, OneRmControllerUpdateData, OneRmControllerUpdateErrors, OneRmControllerUpdateResponses, RoutineControllerCreateData, RoutineControllerCreateErrors, RoutineControllerCreateLogData, RoutineControllerCreateLogErrors, RoutineControllerCreateLogResponses, RoutineControllerCreateResponses, RoutineControllerFindAllData, RoutineControllerFindAllErrors, RoutineControllerFindAllResponses, RoutineControllerFindLogsByDayData, RoutineControllerFindLogsByDayErrors, RoutineControllerFindLogsByDayResponses, RoutineControllerFindOneData, RoutineControllerFindOneErrors, RoutineControllerFindOneResponses, RoutineControllerRemoveData, RoutineControllerRemoveErrors, RoutineControllerRemoveLogData, RoutineControllerRemoveLogErrors, RoutineControllerRemoveLogResponses, RoutineControllerRemoveResponses, RoutineControllerUpdateData, RoutineControllerUpdateErrors, RoutineControllerUpdateResponses } from './types.gen';
+import type { DashboardControllerGetLatestDataData, DashboardControllerGetLatestDataErrors, DashboardControllerGetLatestDataResponses, GoalProfileControllerCreateData, GoalProfileControllerCreateErrors, GoalProfileControllerCreateResponses, GoalProfileControllerFindOneData, GoalProfileControllerFindOneErrors, GoalProfileControllerFindOneResponses, GoalProfileControllerRemoveData, GoalProfileControllerRemoveErrors, GoalProfileControllerRemoveResponses, GoalProfileControllerUpdateData, GoalProfileControllerUpdateErrors, GoalProfileControllerUpdateResponses, InbodyControllerCreateData, InbodyControllerCreateErrors, InbodyControllerCreateResponses, InbodyControllerFindAllData, InbodyControllerFindAllErrors, InbodyControllerFindAllResponses, InbodyControllerFindOneData, InbodyControllerFindOneErrors, InbodyControllerFindOneResponses, InbodyControllerRemoveData, InbodyControllerRemoveErrors, InbodyControllerRemoveResponses, InbodyControllerUpdateData, InbodyControllerUpdateErrors, InbodyControllerUpdateResponses, OneRmControllerCreateData, OneRmControllerCreateErrors, OneRmControllerCreateResponses, OneRmControllerFindAllData, OneRmControllerFindAllErrors, OneRmControllerFindAllResponses, OneRmControllerFindOneData, OneRmControllerFindOneErrors, OneRmControllerFindOneResponses, OneRmControllerRemoveData, OneRmControllerRemoveErrors, OneRmControllerRemoveResponses, OneRmControllerUpdateData, OneRmControllerUpdateErrors, OneRmControllerUpdateResponses, RoutineControllerCreateData, RoutineControllerCreateErrors, RoutineControllerCreateLogData, RoutineControllerCreateLogErrors, RoutineControllerCreateLogResponses, RoutineControllerCreateRecommendedData, RoutineControllerCreateRecommendedErrors, RoutineControllerCreateRecommendedResponses, RoutineControllerCreateResponses, RoutineControllerFindAllData, RoutineControllerFindAllErrors, RoutineControllerFindAllResponses, RoutineControllerFindLogsByDayData, RoutineControllerFindLogsByDayErrors, RoutineControllerFindLogsByDayResponses, RoutineControllerFindOneData, RoutineControllerFindOneErrors, RoutineControllerFindOneResponses, RoutineControllerGetLatestRoutineData, RoutineControllerGetLatestRoutineErrors, RoutineControllerGetLatestRoutineResponses, RoutineControllerRemoveData, RoutineControllerRemoveErrors, RoutineControllerRemoveLogData, RoutineControllerRemoveLogErrors, RoutineControllerRemoveLogResponses, RoutineControllerRemoveResponses, RoutineControllerUpdateData, RoutineControllerUpdateErrors, RoutineControllerUpdateResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -156,6 +156,17 @@ export const routineControllerCreate = <ThrowOnError extends boolean = false>(op
 });
 
 /**
+ * 최신 루틴 조회
+ *
+ * 사용자의 최신 루틴을 조회합니다.
+ */
+export const routineControllerGetLatestRoutine = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerGetLatestRoutineData, ThrowOnError>) => (options?.client ?? client).get<RoutineControllerGetLatestRoutineResponses, RoutineControllerGetLatestRoutineErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/latest',
+    ...options
+});
+
+/**
  * 루틴 삭제
  *
  * 특정 루틴을 삭제합니다.
@@ -230,6 +241,17 @@ export const routineControllerRemoveLog = <ThrowOnError extends boolean = false>
 });
 
 /**
+ * 추천 루틴 생성
+ *
+ * 사용자의 GoalProfile(목표/경력/주당빈도)와 최신 1RM 데이터를 기반으로 추천 루틴을 생성합니다.
+ */
+export const routineControllerCreateRecommended = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerCreateRecommendedData, ThrowOnError>) => (options?.client ?? client).post<RoutineControllerCreateRecommendedResponses, RoutineControllerCreateRecommendedErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/recommended',
+    ...options
+});
+
+/**
  * 1RM 기록 전체 조회
  *
  * 현재 사용자의 모든 1RM 기록을 최신순으로 조회합니다. lift 쿼리 파라미터로 특정 운동 종류만 필터링할 수 있습니다.
@@ -288,4 +310,15 @@ export const oneRmControllerUpdate = <ThrowOnError extends boolean = false>(opti
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * 대시보드 데이터 조회
+ *
+ * 가장 최근의 목표, 인바디, 1RM 정보를 조회합니다.
+ */
+export const dashboardControllerGetLatestData = <ThrowOnError extends boolean = false>(options?: Options<DashboardControllerGetLatestDataData, ThrowOnError>) => (options?.client ?? client).get<DashboardControllerGetLatestDataResponses, DashboardControllerGetLatestDataErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/dashboard',
+    ...options
 });

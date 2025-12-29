@@ -6,6 +6,7 @@ import { InbodyModule } from './inbody/inbody.module';
 import { GoalProfileModule } from './goal/goal.module';
 import { RoutineModule } from './routine/routine.module';
 import { OneRmModule } from './one-rm/one-rm.module';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { OneRmModule } from './one-rm/one-rm.module';
     GoalProfileModule,
     RoutineModule,
     OneRmModule,
+    DashboardModule,
   ],
   controllers: [],
   providers: [],

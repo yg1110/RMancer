@@ -372,4 +372,30 @@ export class RoutineService {
     // 6) 기존 create 재사용하여 저장
     return this.create(userId, dto);
   }
+
+  async getLatestRoutine(userId: string): Promise<RoutineResponseDto | null> {
+    const latestRoutine = await this.prisma.routine.findFirst({
+      where: {
+        userId,
+      },
+      include: {
+        days: {
+          include: {
+            exercises: {
+              orderBy: {
+                order: 'asc',
+              },
+            },
+          },
+          orderBy: {
+            dayIndex: 'asc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+    return latestRoutine as RoutineResponseDto | null;
+  }
 }

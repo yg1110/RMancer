@@ -79,6 +79,33 @@ export class RoutineController {
     return this.routineService.findAll(userId);
   }
 
+  @Get('latest')
+  @ApiOperation({
+    summary: '최신 루틴 조회',
+    description: '사용자의 최신 루틴을 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    type: RoutineResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: ERROR_MESSAGE.UNAUTHORIZED,
+  })
+  @ApiResponse({
+    status: 404,
+    description: ROUTINE_ERROR_MESSAGE.ROUTINE_NOT_FOUND,
+  })
+  async getLatestRoutine(
+    @Request() req: Express.Request,
+  ): Promise<RoutineResponseDto | null> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
+    }
+    return this.routineService.getLatestRoutine(userId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: '루틴 단일 조회',

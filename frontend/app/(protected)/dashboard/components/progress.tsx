@@ -24,7 +24,7 @@ export default function Progress({ step }: ProgressProps) {
             </span>
           </div>
           {num < 3 && (
-            <div className="h-0.5 flex-1 mx-2 bg-slate-200 overflow-hidden">
+            <div className="h-0.5 flex-1 mx-2 mb-4 bg-slate-200 overflow-hidden">
               <div
                 className={`h-full bg-indigo-600 transition-all duration-500 ${step > num ? 'w-full' : 'w-0'}`}
               ></div>
@@ -35,4 +35,3 @@ export default function Progress({ step }: ProgressProps) {
     </div>
   );
 }
-

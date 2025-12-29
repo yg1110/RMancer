@@ -64,41 +64,37 @@ export default function Step3({
           {
             label: '백 스쿼트',
             field: 'squat',
-            color: 'indigo',
             icon: SquatIcon,
           },
           {
             label: '벤치 프레스',
             field: 'benchPress',
-            color: 'blue',
             icon: BenchIcon,
           },
           {
             label: '데드리프트',
             field: 'deadlift',
-            color: 'indigo',
             icon: DeadliftIcon,
           },
           {
             label: '밀리터리 프레스(OHP)',
             field: 'overheadPress',
-            color: 'blue',
             icon: OverheadPressIcon,
           },
-        ].map(item => (
+        ].map((item, idx) => (
           <div
             key={item.field}
-            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${unknowns[item.field as keyof typeof unknowns] ? 'bg-slate-50 border-slate-100 opacity-80' : `bg-${item.color}-50 border-${item.color}-100`}`}
+            className={`flex items-center gap-4 p-4 rounded-2xl border-2 transition-all ${unknowns[item.field as keyof typeof unknowns] ? 'bg-slate-50 border-slate-100 opacity-80' : `${idx % 2 === 0 ? 'bg-indigo-50 border-indigo-100' : 'bg-blue-50 border-blue-100'}`}`}
           >
             <div
-              className={`w-10 h-10 bg-${item.color}-600 rounded-xl flex items-center justify-center text-white`}
+              className={`w-10 h-10 ${idx % 2 === 0 ? 'bg-indigo-600' : 'bg-blue-600'} rounded-xl flex items-center justify-center text-white`}
             >
               <item.icon className="w-5 h-5" />
             </div>
             <div className="flex-1">
               <div className="flex justify-between items-center mb-1">
                 <label
-                  className={`text-[10px] font-bold uppercase ${unknowns[item.field as keyof typeof unknowns] ? 'text-slate-400' : `text-${item.color}-400`}`}
+                  className={`text-[10px] font-bold uppercase ${unknowns[item.field as keyof typeof unknowns] ? 'text-slate-400' : `${idx % 2 === 0 ? 'text-indigo-400' : 'text-blue-400'}`}`}
                 >
                   {item.label}
                 </label>
@@ -119,7 +115,7 @@ export default function Step3({
                   onChange={e =>
                     updateOneRM(item.field as keyof OneRMData, e.target.value)
                   }
-                  className={`bg-transparent text-xl font-black outline-none w-full ${unknowns[item.field as keyof typeof unknowns] ? 'text-slate-300' : `text-${item.color}-900`}`}
+                  className={`bg-transparent text-xl font-black outline-none w-full ${unknowns[item.field as keyof typeof unknowns] ? 'text-slate-300' : `${idx % 2 === 0 ? 'text-indigo-900' : 'text-blue-900'}`}`}
                   placeholder={
                     unknowns[item.field as keyof typeof unknowns]
                       ? '측정값 없음'
@@ -127,7 +123,11 @@ export default function Step3({
                   }
                 />
                 {!unknowns[item.field as keyof typeof unknowns] && (
-                  <span className={`font-bold text-${item.color}-400`}>kg</span>
+                  <span
+                    className={`font-bold ${idx % 2 === 0 ? 'text-indigo-400' : 'text-blue-400'}`}
+                  >
+                    kg
+                  </span>
                 )}
               </div>
             </div>

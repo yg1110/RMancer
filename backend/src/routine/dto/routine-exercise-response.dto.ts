@@ -67,10 +67,21 @@ export class RoutineExerciseResponseDto {
   })
   rirMax: number;
 
+  @ApiProperty({
+    description: '% 범위(min)',
+    example: 0.65,
+  })
+  pctMin: number;
+
+  @ApiProperty({
+    description: '% 범위(max)',
+    example: 0.75,
+  })
+  pctMax: number;
+
   @ApiPropertyOptional({
     description: '안내 문구(선택)',
     example: '가슴 중앙에 집중',
   })
   memo: string | null;
 }
-

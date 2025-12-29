@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   GoalTypeData,
   ExperienceLevelData,
@@ -19,6 +19,7 @@ import {
   CreateGoalProfileDto,
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
+  DashboardResponseDto,
 } from '@/generated/openapi-client';
 import { toast } from 'sonner';
 import Progress from './components/progress';
@@ -26,33 +27,36 @@ import Step1 from './components/step1';
 import Step2 from './components/step2';
 import Step3 from './components/step3';
 import { toErrorMessage } from '@/shared/enums/utils/error';
+import { useRouter } from 'next/navigation';
+import { Save } from 'lucide-react';
 
 export default function DashboardUI() {
-  const [step, setStep] = useState(1);
+  const router = useRouter();
 
+  const [loading, setLoading] = useState(false);
+  const [step, setStep] = useState(1);
   const [prefs, setPrefs] = useState<{
     goal: GoalTypeData;
     experience: ExperienceLevelData;
+    weeklyFrequency: number;
   }>({
     goal: GoalTypeCode.MUSCLE_GAIN,
-    experience: ExperienceLevelCode.BEGINNER,
+    experience: ExperienceLevelCode.ADVANCED,
+    weeklyFrequency: 6,
   });
-
   const [inBody, setInBody] = useState<InBodyData>({
-    heightCm: 175,
-    weightKg: 75,
-    skeletalMuscleKg: 35,
-    bodyFatKg: 18,
-    bodyFatPct: 18,
+    heightCm: 170,
+    weightKg: 69.1,
+    skeletalMuscleKg: 31.5,
+    bodyFatKg: 14.3,
+    bodyFatPct: 20.7,
   });
-
   const [oneRM, setOneRM] = useState<OneRMData>({
-    squat: 100,
-    benchPress: 80,
-    deadlift: 120,
-    overheadPress: 50,
+    squat: 125,
+    benchPress: 85,
+    deadlift: 130,
+    overheadPress: 65,
   });
-
   const [unknowns, setUnknowns] = useState({
     squat: false,
     benchPress: false,
@@ -63,11 +67,7 @@ export default function DashboardUI() {
   const createInbodyRecordMutation = useMutation({
     mutationFn: async (body: CreateInbodyRecordDto) => {
       const { data, error } = await api.createInbodyRecord(body);
-      console.log('error', error);
-      if (error) {
-        toast.error(error as string);
-      }
-
+      if (error) toast.error(error as string);
       return data;
     },
     onError: error => {
@@ -100,46 +100,79 @@ export default function DashboardUI() {
   const handleNext = () => setStep(prev => prev + 1);
   const handleBack = () => setStep(prev => prev - 1);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    setLoading(true);
     const finalRM: OneRMData = {
       squat: unknowns.squat ? 0 : oneRM.squat,
       benchPress: unknowns.benchPress ? 0 : oneRM.benchPress,
       deadlift: unknowns.deadlift ? 0 : oneRM.deadlift,
       overheadPress: unknowns.overheadPress ? 0 : oneRM.overheadPress,
     };
-    const goalProfile = createGoalProfileMutation.mutate({
-      goalType: prefs.goal,
-      experienceLevel: prefs.experience,
-      weeklyFrequency: 4,
-      defaultPlanWeeks: 1,
-    });
-    const inbodyRecord = createInbodyRecordMutation.mutate({
-      measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
-      heightCm: inBody.heightCm,
-      weightKg: inBody.weightKg,
-      skeletalMuscleKg: inBody.skeletalMuscleKg,
-      bodyFatKg: inBody.bodyFatKg,
-      bodyFatPct: inBody.bodyFatPct,
-    });
-    const benchPress = createOneRmRecordMutation.mutate({
-      lift: 'BENCH_PRESS',
-      oneRmKg: finalRM.benchPress,
-    });
-    const deadlift = createOneRmRecordMutation.mutate({
-      lift: 'DEADLIFT',
-      oneRmKg: finalRM.deadlift,
-    });
-    const overheadPress = createOneRmRecordMutation.mutate({
-      lift: 'OVERHEAD_PRESS',
-      oneRmKg: finalRM.overheadPress,
-    });
-    const squat = createOneRmRecordMutation.mutate({
-      lift: 'BACK_SQUAT',
-      oneRmKg: finalRM.squat,
-    });
-    console.log('goalProfile', goalProfile);
-    // navigate('/recommendation');
+
+    try {
+      // TODO 트랜잭션
+      await Promise.all([
+        createGoalProfileMutation.mutateAsync({
+          goalType: prefs.goal,
+          experienceLevel: prefs.experience,
+          weeklyFrequency: prefs.weeklyFrequency,
+          defaultPlanWeeks: 1,
+        }),
+        createInbodyRecordMutation.mutateAsync({
+          measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
+          heightCm: inBody.heightCm,
+          weightKg: inBody.weightKg,
+          skeletalMuscleKg: inBody.skeletalMuscleKg,
+          bodyFatKg: inBody.bodyFatKg,
+          bodyFatPct: inBody.bodyFatPct,
+        }),
+        createOneRmRecordMutation.mutateAsync({
+          lift: 'BENCH_PRESS',
+          oneRmKg: finalRM.benchPress,
+        }),
+        createOneRmRecordMutation.mutateAsync({
+          lift: 'DEADLIFT',
+          oneRmKg: finalRM.deadlift,
+        }),
+        createOneRmRecordMutation.mutateAsync({
+          lift: 'OVERHEAD_PRESS',
+          oneRmKg: finalRM.overheadPress,
+        }),
+        createOneRmRecordMutation.mutateAsync({
+          lift: 'BACK_SQUAT',
+          oneRmKg: finalRM.squat,
+        }),
+      ]);
+      router.push('/selection');
+    } catch (error) {
+      // 에러는 각 mutation의 onError에서 처리됨
+    } finally {
+      setLoading(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-6 text-center">
+        <div className="relative">
+          <div className="w-16 h-16 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Save className="w-6 h-6 text-indigo-600 animate-pulse" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-xl font-black text-slate-800 tracking-tight">
+            정보 저장 중...
+          </h2>
+          <p className="text-slate-400 text-sm">
+            입력하신 데이터를 기반으로
+            <br />
+            최적의 루틴을 준비하고 있습니다.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
