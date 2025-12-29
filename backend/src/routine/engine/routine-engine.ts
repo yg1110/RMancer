@@ -1,10 +1,14 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
-import { ExperienceLevel, GoalType, OneRmLift } from '@prisma/client';
+import {
+  ExperienceLevel,
+  GoalType,
+  LoadMethod,
+  OneRmLift,
+} from '@prisma/client';
 import {
   EXERCISES,
   PRESCRIPTIONS,
   SPLIT_TEMPLATES,
-  type SlotType,
   type SlotTemplate,
 } from '../constants';
 import type { OneRmMap } from './one-rm.util';
@@ -13,6 +17,14 @@ const LEVEL_ORDER: Record<ExperienceLevel, number> = {
   BEGINNER: 0,
   INTERMEDIATE: 1,
   ADVANCED: 2,
+};
+
+const LOAD_METHOD_BY_SLOT_TYPE: Record<string, LoadMethod> = {
+  MAIN: LoadMethod.PERCENT_1RM,
+  PRIMARY: LoadMethod.PERCENT_1RM,
+  COMPOUND: LoadMethod.PERCENT_1RM,
+  ASSIST: LoadMethod.PERCENT_1RM,
+  ACC: LoadMethod.RIR_ONLY,
 };
 
 function isAllowedLevel(userLevel: ExperienceLevel, minLevel: ExperienceLevel) {
@@ -35,7 +47,7 @@ export type CreateRoutineExerciseInput = {
   rirMin: number;
   rirMax: number;
 
-  // PERCENT_1RM only
+  loadMethod: LoadMethod;
   anchorLift: OneRmLift;
   pctMin: number;
   pctMax: number;
@@ -115,6 +127,28 @@ export class RoutineEngine {
     };
   }
 
+  private overrideLoadMethodByExerciseKey(
+    exerciseKey: string,
+  ): LoadMethod | null {
+    const k = exerciseKey.toLowerCase();
+
+    // 맨몸/코어/시간 기반
+    if (
+      k.includes('plank') ||
+      k.includes('crunch') ||
+      k.includes('sit_up') ||
+      k.includes('russian') ||
+      k.includes('leg_raise') ||
+      k.includes('push_up') ||
+      k.includes('pull_up') ||
+      k.includes('chin_up')
+    ) {
+      return LoadMethod.BODYWEIGHT;
+    }
+
+    return null;
+  }
+
   private buildExerciseFromSlot(params: {
     slot: SlotTemplate;
     order: number;
@@ -124,19 +158,30 @@ export class RoutineEngine {
   }): CreateRoutineExerciseInput {
     const { slot, order, goalType, experienceLevel, randomize } = params;
 
-    const pres =
-      PRESCRIPTIONS[goalType]?.[experienceLevel]?.[slot.slotType as SlotType];
+    const pres = PRESCRIPTIONS[goalType]?.[experienceLevel]?.[slot.slotType];
     if (!pres) {
       throw new BadRequestException(
         `처방 테이블이 없습니다: goal=${goalType}, level=${experienceLevel}, slot=${slot.slotType}`,
       );
     }
 
-    const picked = this.pickExercise({
-      slot,
-      experienceLevel,
-      randomize,
-    });
+    const picked = this.pickExercise({ slot, experienceLevel, randomize });
+
+    // ✅ slotType 기반 기본 loadMethod
+    const baseLoadMethod =
+      LOAD_METHOD_BY_SLOT_TYPE[String(slot.slotType).toUpperCase()] ??
+      LoadMethod.RIR_ONLY; // 모르는 slotType이면 안전하게 RIR_ONLY
+
+    // ✅ exerciseKey 기반 오버라이드 (맨몸/코어 등)
+    const overridden = this.overrideLoadMethodByExerciseKey(picked.key);
+    const loadMethod = overridden ?? baseLoadMethod;
+
+    // ✅ loadMethod에 따른 pct 처리 정책
+    // - PERCENT_1RM: pres의 pctMin/pctMax 사용
+    // - RIR_ONLY / BODYWEIGHT: pct는 저장하되 프론트 계산에서 무시해도 되고,
+    //   또는 0으로 저장해도 됩니다. (아래는 0으로 저장하는 정책)
+    const pctMin = loadMethod === LoadMethod.PERCENT_1RM ? pres.pctMin : 0;
+    const pctMax = loadMethod === LoadMethod.PERCENT_1RM ? pres.pctMax : 0;
 
     return {
       order,
@@ -148,12 +193,17 @@ export class RoutineEngine {
       restSec: pres.restSec,
       rirMin: pres.rirMin,
       rirMax: pres.rirMax,
+      anchorLift: slot.anchorLift as OneRmLift,
+      pctMin,
+      pctMax,
+      loadMethod,
 
-      anchorLift: slot.anchorLift,
-      pctMin: pres.pctMin,
-      pctMax: pres.pctMax,
-
-      memo: null,
+      memo:
+        loadMethod === LoadMethod.PERCENT_1RM
+          ? null
+          : loadMethod === LoadMethod.RIR_ONLY
+            ? '중량은 RIR 목표(남기는 반복 수)에 맞춰 선택하세요.'
+            : '맨몸/시간 기반으로 수행하세요.',
     };
   }
 

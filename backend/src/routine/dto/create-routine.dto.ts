@@ -70,4 +70,3 @@ export class CreateRoutineDto {
   @Type(() => CreateRoutineDayDto)
   days: CreateRoutineDayDto[];
 }
-

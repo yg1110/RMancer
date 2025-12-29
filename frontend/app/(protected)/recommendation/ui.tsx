@@ -4,6 +4,7 @@ import {
   DashboardResponseDto,
   RoutineResponseDto,
 } from '@/generated/openapi-client';
+import { OneRmLift } from '@/shared/enums/dashboard.enum';
 import { getMuscleLabelByMovement } from '@/shared/utils/muscle-label';
 import { calcPctWeightRange, formatRange } from '@/shared/utils/weight';
 import {
@@ -88,14 +89,18 @@ export default function RecommendationUI({
 
           <div className="space-y-4">
             {currentDay.exercises.map((ex, eIdx) => {
-              const oneRm = dashboardData?.latestOneRm?.oneRmKg || 0;
+              const oneRm =
+                dashboardData?.latestOneRm?.[ex.anchorLift as OneRmLift] || 0;
 
-              const range = calcPctWeightRange({
-                oneRmKg: oneRm,
-                pctMin: ex.pctMin,
-                pctMax: ex.pctMax,
-                step: 1.25,
-              });
+              const isPercent = ex.loadMethod === 'PERCENT_1RM';
+
+              const range = isPercent
+                ? calcPctWeightRange({
+                    oneRmKg: oneRm,
+                    pctMin: ex.pctMin,
+                    pctMax: ex.pctMax,
+                  })
+                : null;
 
               const weightLabel = formatRange(range);
               return (
@@ -123,16 +128,14 @@ export default function RecommendationUI({
                             {ex.displayName}
                           </h5>
                         </div>
-                        {dashboardData?.latestOneRm?.lift && (
-                          <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-xl">
-                            {
-                              getMuscleLabelByMovement({
-                                anchorLift: dashboardData.latestOneRm.lift,
-                                exerciseKey: ex.exerciseKey,
-                              }).label
-                            }
-                          </span>
-                        )}
+                        <span className="text-[10px] font-bold text-indigo-500 bg-indigo-50 px-2.5 py-1 rounded-xl">
+                          {
+                            getMuscleLabelByMovement({
+                              anchorLift: ex.anchorLift as OneRmLift,
+                              exerciseKey: ex.exerciseKey,
+                            }).label
+                          }
+                        </span>
                       </div>
 
                       <div className="flex items-center gap-2 mt-2">
@@ -162,7 +165,7 @@ export default function RecommendationUI({
                             {weightLabel}
                           </span>
                           <span className="text-xs font-bold text-slate-400">
-                            kg
+                            {isPercent ? 'kg' : ''}
                           </span>
                         </div>
                       </div>

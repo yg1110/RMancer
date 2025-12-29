@@ -8,7 +8,7 @@ import {
   IsEnum,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { OneRmLift } from '@prisma/client';
+import { LoadMethod, OneRmLift } from '@prisma/client';
 
 export class CreateRoutineExerciseDto {
   @ApiProperty({
@@ -98,6 +98,14 @@ export class CreateRoutineExerciseDto {
   @Min(0)
   @Max(1)
   pctMax: number;
+
+  @ApiProperty({
+    description: '로드 방법',
+    enum: LoadMethod,
+    example: LoadMethod.PERCENT_1RM,
+  })
+  @IsEnum(LoadMethod)
+  loadMethod: LoadMethod;
 
   @ApiProperty({
     description: 'OneRM 리프트',

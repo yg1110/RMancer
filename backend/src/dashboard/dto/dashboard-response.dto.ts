@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { GoalProfileResponseDto } from '../../goal/dto/goal-profile-response.dto';
 import { InbodyRecordResponseDto } from '../../inbody/dto/inbody-record-response.dto';
-import { OneRmRecordResponseDto } from '../../one-rm/dto/one-rm-record-response.dto';
+import { OneRmAllResponseDto } from 'src/one-rm/dto/one-rm-all-response.dto';
 
 export class DashboardResponseDto {
   @ApiProperty({
@@ -20,8 +20,8 @@ export class DashboardResponseDto {
 
   @ApiProperty({
     description: '가장 최근 1RM 기록',
-    type: OneRmRecordResponseDto,
+    type: OneRmAllResponseDto,
     nullable: true,
   })
-  latestOneRm: OneRmRecordResponseDto | null;
+  latestOneRm: OneRmAllResponseDto | null;
 }

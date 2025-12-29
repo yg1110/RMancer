@@ -49,7 +49,6 @@ export function calcPctWeightRange(opts: {
   return { minKg, maxKg };
 }
 
-/** 표시 문자열: "62.5–70kg" */
 export function formatRange(range: { minKg: number; maxKg: number } | null) {
   if (!range) return '-';
   if (range.minKg === range.maxKg) return `${range.minKg}`;

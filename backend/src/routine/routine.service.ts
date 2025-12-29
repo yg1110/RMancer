@@ -48,6 +48,7 @@ export class RoutineService {
                 anchorLift: exercise.anchorLift,
                 pctMin: exercise.pctMin,
                 pctMax: exercise.pctMax,
+                loadMethod: exercise.loadMethod,
                 memo: exercise.memo,
               })),
             },

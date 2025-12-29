@@ -1,4 +1,5 @@
 import { OneRMData } from '@/types/dashboard';
+import { OneRmLift } from '../enums/dashboard.enum';
 
 export type MuscleLabel =
   | '가슴'
@@ -15,7 +16,7 @@ export type MuscleLabelResult = {
 };
 
 export function getMuscleLabelByMovement(opts: {
-  anchorLift: 'BENCH_PRESS' | 'OVERHEAD_PRESS' | 'BACK_SQUAT' | 'DEADLIFT';
+  anchorLift: OneRmLift;
   exerciseKey: string;
   displayName?: string | null;
 }): MuscleLabelResult {

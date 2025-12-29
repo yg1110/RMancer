@@ -173,6 +173,11 @@ model RoutineDay {
   @@map("routine_days")
 }
 
+enum LoadMethod {
+  PERCENT_1RM
+  RIR_ONLY
+  BODYWEIGHT
+}
 model RoutineExercise {
   id           String @id @default(cuid())
 
@@ -190,6 +195,7 @@ model RoutineExercise {
   pctMin       Float     @map("pct_min")
   pctMax       Float     @map("pct_max")
 
+  loadMethod   LoadMethod @default(PERCENT_1RM) @map("load_method")
   anchorLift   OneRmLift @map("anchor_lift")
   day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
 

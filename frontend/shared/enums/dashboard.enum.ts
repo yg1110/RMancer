@@ -36,3 +36,8 @@ export const GoalTypeLabel: Record<
 export type ExperienceLevel =
   (typeof ExperienceLevelCode)[keyof typeof ExperienceLevelCode];
 export type GoalType = (typeof GoalTypeCode)[keyof typeof GoalTypeCode];
+export type OneRmLift =
+  | 'BENCH_PRESS'
+  | 'BACK_SQUAT'
+  | 'DEADLIFT'
+  | 'OVERHEAD_PRESS';

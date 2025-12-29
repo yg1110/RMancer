@@ -1,4 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { LoadMethod, OneRmLift } from '@prisma/client';
+import { IsEnum } from 'class-validator';
 
 export class RoutineExerciseResponseDto {
   @ApiProperty({
@@ -78,6 +80,21 @@ export class RoutineExerciseResponseDto {
     example: 0.75,
   })
   pctMax: number;
+
+  @ApiProperty({
+    description: 'OneRM 리프트',
+    example: 'BACK_SQUAT',
+  })
+  @IsEnum(OneRmLift)
+  anchorLift: OneRmLift;
+
+  @ApiProperty({
+    description: '로드 방법',
+    enum: LoadMethod,
+    example: LoadMethod.PERCENT_1RM,
+  })
+  @IsEnum(LoadMethod)
+  loadMethod: LoadMethod;
 
   @ApiPropertyOptional({
     description: '안내 문구(선택)',

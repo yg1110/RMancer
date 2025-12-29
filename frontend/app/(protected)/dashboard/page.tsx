@@ -8,7 +8,11 @@ export default async function DashboardPage() {
   const { data: dashboardData, error: dashboardError } =
     await getDashboardData();
 
-  if (dashboardData) {
+  if (
+    dashboardData?.latestGoal?.goalType &&
+    dashboardData?.latestGoal?.experienceLevel &&
+    dashboardData?.latestGoal?.weeklyFrequency
+  ) {
     redirect('/recommendation');
   }
 

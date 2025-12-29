@@ -25,7 +25,7 @@ import { OneRmRecordResponseDto } from './dto/one-rm-record-response.dto';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { ERROR_MESSAGE } from 'src/common/error.constants';
 import { ONE_RM_ERROR_MESSAGE } from './one-rm.constants';
-import { OneRmLift } from '@prisma/client';
+import { OneRmAllResponseDto } from './dto/one-rm-all-response.dto';
 
 @ApiTags('1RM 기록')
 @Controller('one-rm')
@@ -59,34 +59,33 @@ export class OneRmController {
 
   @Get()
   @ApiOperation({
-    summary: '1RM 기록 전체 조회',
+    summary: '1RM 기록 요약 조회',
     description:
-      '현재 사용자의 모든 1RM 기록을 최신순으로 조회합니다. lift 쿼리 파라미터로 특정 운동 종류만 필터링할 수 있습니다.',
-  })
-  @ApiQuery({
-    name: 'lift',
-    required: false,
-    enum: OneRmLift,
-    description:
-      '운동 종류로 필터링 (BENCH_PRESS, BACK_SQUAT, DEADLIFT, OVERHEAD_PRESS)',
+      '현재 사용자의 각 운동 종류(BENCH_PRESS, BACK_SQUAT, DEADLIFT, OVERHEAD_PRESS)에 대한 최신 1RM 기록을 객체로 반환합니다. 각 값이 없으면 0으로 반환합니다.',
   })
   @ApiResponse({
     status: 200,
-    type: [OneRmRecordResponseDto],
+    schema: {
+      example: {
+        BENCH_PRESS: 100,
+        BACK_SQUAT: 140,
+        DEADLIFT: 180,
+        OVERHEAD_PRESS: 60,
+      },
+    },
   })
   @ApiResponse({
     status: 401,
     description: ERROR_MESSAGE.UNAUTHORIZED,
   })
-  async findAll(
+  async findAllOneRmObject(
     @Request() req: Express.Request,
-    @Query('lift') lift?: OneRmLift,
-  ): Promise<OneRmRecordResponseDto[]> {
+  ): Promise<OneRmAllResponseDto> {
     const userId = req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
-    return this.oneRmService.findAll(userId, lift);
+    return this.oneRmService.getAllOneRmObject(userId);
   }
 
   @Get(':id')
