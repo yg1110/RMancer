@@ -3,6 +3,7 @@ import Providers from '@/config/providers';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
+import LocatorUI from './locator-ui';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="ko" className={inter.className}>
       <body>
+        <LocatorUI />
         <Providers>{children}</Providers>
         <Toaster />
       </body>
