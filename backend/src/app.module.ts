@@ -7,6 +7,7 @@ import { GoalProfileModule } from './goal/goal.module';
 import { RoutineModule } from './routine/routine.module';
 import { OneRmModule } from './one-rm/one-rm.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     RoutineModule,
     OneRmModule,
     DashboardModule,
+    HealthModule,
   ],
   controllers: [],
   providers: [],
