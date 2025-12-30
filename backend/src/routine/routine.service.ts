@@ -311,7 +311,7 @@ export class RoutineService {
     });
 
     const goalType: GoalType = profile?.goalType ?? GoalType.MUSCLE_GAIN;
-    const planWeeks = profile?.defaultPlanWeeks ?? 4;
+    const planWeeks = profile?.defaultPlanWeeks ?? 1;
     const freqRaw = profile?.weeklyFrequency ?? 3;
     const weeklyFrequency = ([3, 4, 5, 6].includes(freqRaw) ? freqRaw : 3) as
       | 3

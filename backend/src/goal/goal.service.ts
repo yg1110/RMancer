@@ -29,7 +29,7 @@ export class GoalProfileService {
         goalType: createDto.goalType,
         experienceLevel: createDto.experienceLevel,
         weeklyFrequency: createDto.weeklyFrequency,
-        defaultPlanWeeks: createDto.defaultPlanWeeks ?? 4,
+        defaultPlanWeeks: createDto.defaultPlanWeeks ?? 1,
       },
     });
 
