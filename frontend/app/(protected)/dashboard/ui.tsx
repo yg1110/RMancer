@@ -20,6 +20,8 @@ import {
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
   DashboardResponseDto,
+  UpdateGoalProfileDto,
+  UpdateInbodyRecordDto,
 } from '@/generated/openapi-client';
 import { toast } from 'sonner';
 import Progress from './components/progress';
@@ -30,7 +32,7 @@ import { toErrorMessage } from '@/shared/enums/utils/error';
 import { useRouter } from 'next/navigation';
 import { Save } from 'lucide-react';
 
-export default function DashboardUI() {
+export default function DashboardUI({ isEdit }: { isEdit: boolean }) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,17 @@ export default function DashboardUI() {
     },
   });
 
+  const updateGoalProfileMutation = useMutation({
+    mutationFn: async (body: UpdateGoalProfileDto) => {
+      const { data, error } = await api.updateGoalProfile(body);
+      if (error) throw error;
+      return data;
+    },
+    onError: error => {
+      toast.error(toErrorMessage(error));
+    },
+  });
+
   const createOneRmRecordMutation = useMutation({
     mutationFn: async (body: CreateOneRmRecordDto) => {
       const { data, error } = await api.createOneRmRecord(body);
@@ -110,9 +123,12 @@ export default function DashboardUI() {
     };
 
     try {
+      const profileMutation = isEdit
+        ? updateGoalProfileMutation
+        : createGoalProfileMutation;
       // TODO 트랜잭션
       await Promise.all([
-        createGoalProfileMutation.mutateAsync({
+        profileMutation.mutateAsync({
           goalType: prefs.goal,
           experienceLevel: prefs.experience,
           weeklyFrequency: prefs.weeklyFrequency,

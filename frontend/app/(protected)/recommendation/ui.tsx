@@ -14,6 +14,7 @@ import {
   Target,
   Zap,
   Activity,
+  Settings2,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -227,13 +228,26 @@ export default function RecommendationUI({
           </p>
         </div>
 
-        <button
-          onClick={() => router.push('/dashboard')}
-          className="w-full py-5 text-slate-400 text-sm font-bold border border-slate-200 rounded-3xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2 group"
-        >
-          기본 정보 및 목표 수정{' '}
-          <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </button>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => router.push('/selection')}
+            className="py-5 bg-white border border-slate-200 rounded-3xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2 group shadow-sm"
+          >
+            <Zap className="w-4 h-4 text-amber-500" />
+            <span className="text-[11px] font-black text-slate-600">
+              프로그램 변경
+            </span>
+          </button>
+          <button
+            onClick={() => router.push('/dashboard?edit=true')}
+            className="py-5 bg-white border border-slate-200 rounded-3xl hover:bg-slate-50 transition-all flex items-center justify-center gap-2 group shadow-sm"
+          >
+            <Settings2 className="w-4 h-4 text-indigo-500" />
+            <span className="text-[11px] font-black text-slate-600">
+              기본 정보 수정
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );
