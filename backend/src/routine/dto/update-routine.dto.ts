@@ -1,17 +1,21 @@
 import {
   IsString,
-  IsInt,
   IsEnum,
+  IsInt,
+  IsArray,
+  ValidateNested,
   IsOptional,
   Min,
   Max,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { GoalType, ExperienceLevel } from '@prisma/client';
+import { CreateRoutineDayDto } from './create-routine-day.dto';
 
 export class UpdateRoutineDto {
   @ApiPropertyOptional({
-    description: '화면 표시용 제목 (ex: "근비대 4주 / 주4회")',
+    description: '루틴 제목',
     example: '근비대 4주 / 주4회',
   })
   @IsOptional()
@@ -19,49 +23,42 @@ export class UpdateRoutineDto {
   title?: string;
 
   @ApiPropertyOptional({
-    description: '추천 당시 목표 타입',
+    description: '목표 타입',
     enum: GoalType,
-    example: GoalType.MUSCLE_GAIN,
+    example: 'MUSCLE_GAIN',
   })
   @IsOptional()
   @IsEnum(GoalType)
   goalType?: GoalType;
 
   @ApiPropertyOptional({
-    description: '추천 당시 경험치',
+    description: '경험 레벨',
     enum: ExperienceLevel,
-    example: ExperienceLevel.INTERMEDIATE,
+    example: 'INTERMEDIATE',
   })
   @IsOptional()
   @IsEnum(ExperienceLevel)
   experienceLevel?: ExperienceLevel;
 
   @ApiPropertyOptional({
-    description: '추천 당시 주당 횟수',
+    description: '주당 운동 횟수',
     example: 4,
+    minimum: 3,
+    maximum: 6,
   })
   @IsOptional()
   @IsInt()
-  @Min(1)
-  @Max(7)
+  @Min(3)
+  @Max(6)
   weeklyFrequency?: number;
 
   @ApiPropertyOptional({
-    description: '추천 기간(주) - 1~4',
-    example: 4,
+    description: '루틴 일차 목록',
+    type: [CreateRoutineDayDto],
   })
   @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(4)
-  planWeeks?: number;
-
-  @ApiPropertyOptional({
-    description: '추천 룰 버전(추천 알고리즘 변경 시 재현 가능하게)',
-    example: '1.0.0',
-  })
-  @IsOptional()
-  @IsString()
-  sourceVersion?: string;
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateRoutineDayDto)
+  days?: CreateRoutineDayDto[];
 }
-

@@ -4,10 +4,10 @@ import { PrismaModule } from './prisma/prisma.module';
 import { ConfigModule } from '@nestjs/config';
 import { InbodyModule } from './inbody/inbody.module';
 import { GoalProfileModule } from './goal/goal.module';
-import { RoutineModule } from './routine/routine.module';
 import { OneRmModule } from './one-rm/one-rm.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { HealthModule } from './health/health.module';
+import { RoutineModule } from './routine/routine.module';
 
 @Module({
   imports: [
@@ -16,10 +16,10 @@ import { HealthModule } from './health/health.module';
     PrismaModule,
     InbodyModule,
     GoalProfileModule,
-    RoutineModule,
     OneRmModule,
     DashboardModule,
     HealthModule,
+    RoutineModule,
   ],
   controllers: [],
   providers: [],

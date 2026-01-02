@@ -110,10 +110,6 @@ export type CreateGoalProfileDto = {
      * 주당 운동 횟수 (3~6 권장)
      */
     weeklyFrequency: number;
-    /**
-     * 기본 추천 기간(주) (1~4 권장)
-     */
-    defaultPlanWeeks?: number;
 };
 
 export type GoalProfileResponseDto = {
@@ -138,10 +134,6 @@ export type GoalProfileResponseDto = {
      */
     weeklyFrequency: number;
     /**
-     * 기본 추천 기간(주)
-     */
-    defaultPlanWeeks: number;
-    /**
      * 수정일시
      */
     updatedAt: string;
@@ -164,313 +156,6 @@ export type UpdateGoalProfileDto = {
      * 주당 운동 횟수 (3~6 권장)
      */
     weeklyFrequency?: number;
-    /**
-     * 기본 추천 기간(주) (1~4 권장)
-     */
-    defaultPlanWeeks?: number;
-};
-
-export type CreateRoutineExerciseDto = {
-    /**
-     * 화면 표시 순서
-     */
-    order: number;
-    /**
-     * 운동 키(코드 상수/카탈로그 키)
-     */
-    exerciseKey: string;
-    /**
-     * 표시명(한글명 등)
-     */
-    displayName: string;
-    /**
-     * 세트 수
-     */
-    sets: number;
-    /**
-     * 반복 범위(min)
-     */
-    repsMin: number;
-    /**
-     * 반복 범위(max)
-     */
-    repsMax: number;
-    /**
-     * 휴식(초)
-     */
-    restSec: number;
-    /**
-     * RIR 범위(min)
-     */
-    rirMin: number;
-    /**
-     * RIR 범위(max)
-     */
-    rirMax: number;
-    /**
-     * % 범위(min)
-     */
-    pctMin: number;
-    /**
-     * % 범위(max)
-     */
-    pctMax: number;
-    /**
-     * 로드 방법
-     */
-    loadMethod: 'PERCENT_1RM' | 'RIR_ONLY' | 'BODYWEIGHT';
-    /**
-     * OneRM 리프트
-     */
-    anchorLift: string;
-    /**
-     * 안내 문구(선택)
-     */
-    memo?: string;
-};
-
-export type CreateRoutineDayDto = {
-    /**
-     * 주간 내 순서(0..weeklyFrequency-1)
-     */
-    dayIndex: number;
-    /**
-     * Day 이름(예: "Upper A")
-     */
-    name: string;
-    /**
-     * 운동 항목 목록
-     */
-    exercises: Array<CreateRoutineExerciseDto>;
-};
-
-export type CreateRoutineDto = {
-    /**
-     * 화면 표시용 제목 (ex: "근비대 4주 / 주4회")
-     */
-    title: string;
-    /**
-     * 추천 당시 목표 타입
-     */
-    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
-    /**
-     * 추천 당시 경험치
-     */
-    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-    /**
-     * 추천 당시 주당 횟수
-     */
-    weeklyFrequency: number;
-    /**
-     * 추천 기간(주) - 1~4
-     */
-    planWeeks: number;
-    /**
-     * 추천 룰 버전(추천 알고리즘 변경 시 재현 가능하게)
-     */
-    sourceVersion: string;
-    /**
-     * 루틴 일차 목록
-     */
-    days: Array<CreateRoutineDayDto>;
-};
-
-export type RoutineExerciseResponseDto = {
-    /**
-     * 운동 항목 ID
-     */
-    id: string;
-    /**
-     * 루틴 일차 ID
-     */
-    routineDayId: string;
-    /**
-     * 화면 표시 순서
-     */
-    order: number;
-    /**
-     * 운동 키(코드 상수/카탈로그 키)
-     */
-    exerciseKey: string;
-    /**
-     * 표시명(한글명 등)
-     */
-    displayName: string;
-    /**
-     * 세트 수
-     */
-    sets: number;
-    /**
-     * 반복 범위(min)
-     */
-    repsMin: number;
-    /**
-     * 반복 범위(max)
-     */
-    repsMax: number;
-    /**
-     * 휴식(초)
-     */
-    restSec: number;
-    /**
-     * RIR 범위(min)
-     */
-    rirMin: number;
-    /**
-     * RIR 범위(max)
-     */
-    rirMax: number;
-    /**
-     * % 범위(min)
-     */
-    pctMin: number;
-    /**
-     * % 범위(max)
-     */
-    pctMax: number;
-    /**
-     * OneRM 리프트
-     */
-    anchorLift: string;
-    /**
-     * 로드 방법
-     */
-    loadMethod: 'PERCENT_1RM' | 'RIR_ONLY' | 'BODYWEIGHT';
-    /**
-     * 안내 문구(선택)
-     */
-    memo?: {
-        [key: string]: unknown;
-    };
-};
-
-export type RoutineDayResponseDto = {
-    /**
-     * 루틴 일차 ID
-     */
-    id: string;
-    /**
-     * 루틴 ID
-     */
-    routineId: string;
-    /**
-     * 주간 내 순서(0..weeklyFrequency-1)
-     */
-    dayIndex: number;
-    /**
-     * Day 이름(예: "Upper A")
-     */
-    name: string;
-    /**
-     * 운동 항목 목록
-     */
-    exercises: Array<RoutineExerciseResponseDto>;
-};
-
-export type RoutineResponseDto = {
-    /**
-     * 루틴 ID
-     */
-    id: string;
-    /**
-     * 사용자 ID
-     */
-    userId: string;
-    /**
-     * 화면 표시용 제목 (ex: "근비대 4주 / 주4회")
-     */
-    title: string;
-    /**
-     * 추천 당시 목표 타입
-     */
-    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
-    /**
-     * 추천 당시 경험치
-     */
-    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-    /**
-     * 추천 당시 주당 횟수
-     */
-    weeklyFrequency: number;
-    /**
-     * 추천 기간(주) - 1~4
-     */
-    planWeeks: number;
-    /**
-     * 추천 룰 버전(추천 알고리즘 변경 시 재현 가능하게)
-     */
-    sourceVersion: string;
-    /**
-     * 생성일시
-     */
-    createdAt: string;
-    /**
-     * 루틴 일차 목록
-     */
-    days: Array<RoutineDayResponseDto>;
-};
-
-export type UpdateRoutineDto = {
-    /**
-     * 화면 표시용 제목 (ex: "근비대 4주 / 주4회")
-     */
-    title?: string;
-    /**
-     * 추천 당시 목표 타입
-     */
-    goalType?: 'MUSCLE_GAIN' | 'FAT_LOSS';
-    /**
-     * 추천 당시 경험치
-     */
-    experienceLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
-    /**
-     * 추천 당시 주당 횟수
-     */
-    weeklyFrequency?: number;
-    /**
-     * 추천 기간(주) - 1~4
-     */
-    planWeeks?: number;
-    /**
-     * 추천 룰 버전(추천 알고리즘 변경 시 재현 가능하게)
-     */
-    sourceVersion?: string;
-};
-
-export type CreateRoutineLogDto = {
-    /**
-     * 수행 날짜
-     */
-    date: string;
-    /**
-     * 완료 여부
-     */
-    isCompleted?: boolean;
-};
-
-export type RoutineLogResponseDto = {
-    /**
-     * 루틴 로그 ID
-     */
-    id: string;
-    /**
-     * 루틴 일차 ID
-     */
-    routineDayId: string;
-    /**
-     * 수행 날짜
-     */
-    date: string;
-    /**
-     * 완료 여부
-     */
-    isCompleted: boolean;
-    /**
-     * 완료 시각
-     */
-    completedAt?: {
-        [key: string]: unknown;
-    };
 };
 
 export type CreateOneRmRecordDto = {
@@ -562,6 +247,233 @@ export type DashboardResponseDto = {
      * 가장 최근 1RM 기록
      */
     latestOneRm: OneRmAllResponseDto | null;
+};
+
+export type CreateRoutineSubExerciseDto = {
+    /**
+     * 운동 순서
+     */
+    order: number;
+    /**
+     * 세트 수
+     */
+    sets?: number;
+    /**
+     * 반복 수
+     */
+    reps?: number;
+    /**
+     * 1RM 퍼센트
+     */
+    oneRmPct?: number;
+    /**
+     * 운동 이름
+     */
+    exerciseName?: string;
+    /**
+     * 운동 부위
+     */
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    /**
+     * 선택 가능한 운동 목록
+     */
+    chooseOneExercises?: string;
+    /**
+     * 운동 메모
+     */
+    memo?: string;
+};
+
+export type CreateRoutineDayDto = {
+    /**
+     * 운동 일차 인덱스
+     */
+    dayIndex: number;
+    /**
+     * 운동 이름
+     */
+    name: string;
+    /**
+     * 운동 부위
+     */
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    /**
+     * 운동 목록
+     */
+    subExercises: Array<CreateRoutineSubExerciseDto>;
+};
+
+export type CreateRoutineDto = {
+    /**
+     * 루틴 제목
+     */
+    title: string;
+    /**
+     * 목표 타입
+     */
+    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
+    /**
+     * 경험 레벨
+     */
+    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    /**
+     * 주당 운동 횟수
+     */
+    weeklyFrequency: number;
+    /**
+     * 루틴 일차 목록
+     */
+    days: Array<CreateRoutineDayDto>;
+};
+
+export type RoutineSubExerciseResponseDto = {
+    /**
+     * 운동 ID
+     */
+    id: string;
+    /**
+     * 루틴 일차 ID
+     */
+    routineDayId: string;
+    /**
+     * 운동 순서
+     */
+    order: number;
+    /**
+     * 세트 수
+     */
+    sets?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 반복 수
+     */
+    reps?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 1RM 퍼센트
+     */
+    oneRmPct?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 운동 이름
+     */
+    exerciseName?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 선택 가능한 운동 목록
+     */
+    chooseOneExercises?: {
+        [key: string]: unknown;
+    };
+    /**
+     * 생성일시
+     */
+    createdAt: string;
+    /**
+     * 수정일시
+     */
+    updatedAt: string;
+};
+
+export type RoutineDayResponseDto = {
+    /**
+     * 루틴 일차 ID
+     */
+    id: string;
+    /**
+     * 루틴 ID
+     */
+    routineId: string;
+    /**
+     * 요일 인덱스
+     */
+    dayIndex: number;
+    /**
+     * 요일 이름
+     */
+    name: string;
+    /**
+     * 운동 부위
+     */
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    /**
+     * 운동 목록
+     */
+    subExercises: Array<RoutineSubExerciseResponseDto>;
+    /**
+     * 생성일시
+     */
+    createdAt: string;
+    /**
+     * 수정일시
+     */
+    updatedAt: string;
+};
+
+export type RoutineResponseDto = {
+    /**
+     * 루틴 ID
+     */
+    id: string;
+    /**
+     * 사용자 ID
+     */
+    userId: string;
+    /**
+     * 루틴 제목
+     */
+    title: string;
+    /**
+     * 목표 타입
+     */
+    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
+    /**
+     * 경험 레벨
+     */
+    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    /**
+     * 주당 운동 횟수
+     */
+    weeklyFrequency: number;
+    /**
+     * 루틴 일차 목록
+     */
+    days: Array<RoutineDayResponseDto>;
+    /**
+     * 생성일시
+     */
+    createdAt: string;
+    /**
+     * 수정일시
+     */
+    updatedAt: string;
+};
+
+export type UpdateRoutineDto = {
+    /**
+     * 루틴 제목
+     */
+    title?: string;
+    /**
+     * 목표 타입
+     */
+    goalType?: 'MUSCLE_GAIN' | 'FAT_LOSS';
+    /**
+     * 경험 레벨
+     */
+    experienceLevel?: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    /**
+     * 주당 운동 횟수
+     */
+    weeklyFrequency?: number;
+    /**
+     * 루틴 일차 목록
+     */
+    days?: Array<CreateRoutineDayDto>;
 };
 
 export type InbodyControllerFindAllData = {
@@ -776,246 +688,6 @@ export type GoalProfileControllerCreateResponses = {
 
 export type GoalProfileControllerCreateResponse = GoalProfileControllerCreateResponses[keyof GoalProfileControllerCreateResponses];
 
-export type RoutineControllerFindAllData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/routines';
-};
-
-export type RoutineControllerFindAllErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-};
-
-export type RoutineControllerFindAllResponses = {
-    200: Array<RoutineResponseDto>;
-};
-
-export type RoutineControllerFindAllResponse = RoutineControllerFindAllResponses[keyof RoutineControllerFindAllResponses];
-
-export type RoutineControllerCreateData = {
-    body: CreateRoutineDto;
-    path?: never;
-    query?: never;
-    url: '/routines';
-};
-
-export type RoutineControllerCreateErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-};
-
-export type RoutineControllerCreateResponses = {
-    201: RoutineResponseDto;
-};
-
-export type RoutineControllerCreateResponse = RoutineControllerCreateResponses[keyof RoutineControllerCreateResponses];
-
-export type RoutineControllerGetLatestRoutineData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/routines/latest';
-};
-
-export type RoutineControllerGetLatestRoutineErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴을 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerGetLatestRoutineResponses = {
-    200: RoutineResponseDto;
-};
-
-export type RoutineControllerGetLatestRoutineResponse = RoutineControllerGetLatestRoutineResponses[keyof RoutineControllerGetLatestRoutineResponses];
-
-export type RoutineControllerRemoveData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/routines/{id}';
-};
-
-export type RoutineControllerRemoveErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴을 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerRemoveResponses = {
-    200: unknown;
-};
-
-export type RoutineControllerFindOneData = {
-    body?: never;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/routines/{id}';
-};
-
-export type RoutineControllerFindOneErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴을 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerFindOneResponses = {
-    200: RoutineResponseDto;
-};
-
-export type RoutineControllerFindOneResponse = RoutineControllerFindOneResponses[keyof RoutineControllerFindOneResponses];
-
-export type RoutineControllerUpdateData = {
-    body: UpdateRoutineDto;
-    path: {
-        id: string;
-    };
-    query?: never;
-    url: '/routines/{id}';
-};
-
-export type RoutineControllerUpdateErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴을 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerUpdateResponses = {
-    /**
-     * 루틴이 성공적으로 수정되었습니다.
-     */
-    200: RoutineResponseDto;
-};
-
-export type RoutineControllerUpdateResponse = RoutineControllerUpdateResponses[keyof RoutineControllerUpdateResponses];
-
-export type RoutineControllerFindLogsByDayData = {
-    body?: never;
-    path: {
-        dayId: string;
-    };
-    query?: never;
-    url: '/routines/{routineId}/days/{dayId}/logs';
-};
-
-export type RoutineControllerFindLogsByDayErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴 일차를 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerFindLogsByDayResponses = {
-    200: Array<RoutineLogResponseDto>;
-};
-
-export type RoutineControllerFindLogsByDayResponse = RoutineControllerFindLogsByDayResponses[keyof RoutineControllerFindLogsByDayResponses];
-
-export type RoutineControllerCreateLogData = {
-    body: CreateRoutineLogDto;
-    path: {
-        dayId: string;
-    };
-    query?: never;
-    url: '/routines/{routineId}/days/{dayId}/logs';
-};
-
-export type RoutineControllerCreateLogErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴 일차를 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerCreateLogResponses = {
-    201: RoutineLogResponseDto;
-};
-
-export type RoutineControllerCreateLogResponse = RoutineControllerCreateLogResponses[keyof RoutineControllerCreateLogResponses];
-
-export type RoutineControllerRemoveLogData = {
-    body?: never;
-    path: {
-        dayId: string;
-        date: string;
-    };
-    query?: never;
-    url: '/routines/{routineId}/days/{dayId}/logs/{date}';
-};
-
-export type RoutineControllerRemoveLogErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-    /**
-     * 루틴 로그를 찾을 수 없습니다
-     */
-    404: unknown;
-};
-
-export type RoutineControllerRemoveLogResponses = {
-    200: unknown;
-};
-
-export type RoutineControllerCreateRecommendedData = {
-    body?: never;
-    path?: never;
-    query?: never;
-    url: '/routines/recommended';
-};
-
-export type RoutineControllerCreateRecommendedErrors = {
-    /**
-     * 인증 토큰이 필요합니다.
-     */
-    401: unknown;
-};
-
-export type RoutineControllerCreateRecommendedResponses = {
-    201: RoutineResponseDto;
-};
-
-export type RoutineControllerCreateRecommendedResponse = RoutineControllerCreateRecommendedResponses[keyof RoutineControllerCreateRecommendedResponses];
-
 export type OneRmControllerFindAllOneRmObjectData = {
     body?: never;
     path?: never;
@@ -1171,3 +843,155 @@ export type HealthControllerCheckResponses = {
 };
 
 export type HealthControllerCheckResponse = HealthControllerCheckResponses[keyof HealthControllerCheckResponses];
+
+export type RoutineControllerFindAllData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines';
+};
+
+export type RoutineControllerFindAllErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+};
+
+export type RoutineControllerFindAllResponses = {
+    200: Array<RoutineResponseDto>;
+};
+
+export type RoutineControllerFindAllResponse = RoutineControllerFindAllResponses[keyof RoutineControllerFindAllResponses];
+
+export type RoutineControllerCreateData = {
+    body: CreateRoutineDto;
+    path?: never;
+    query?: never;
+    url: '/routines';
+};
+
+export type RoutineControllerCreateErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+};
+
+export type RoutineControllerCreateResponses = {
+    201: RoutineResponseDto;
+};
+
+export type RoutineControllerCreateResponse = RoutineControllerCreateResponses[keyof RoutineControllerCreateResponses];
+
+export type RoutineControllerRemoveData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/routines/{id}';
+};
+
+export type RoutineControllerRemoveErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+    /**
+     * 루틴을 찾을 수 없습니다
+     */
+    404: unknown;
+};
+
+export type RoutineControllerRemoveResponses = {
+    200: unknown;
+};
+
+export type RoutineControllerFindOneData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/routines/{id}';
+};
+
+export type RoutineControllerFindOneErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+    /**
+     * 루틴을 찾을 수 없습니다
+     */
+    404: unknown;
+};
+
+export type RoutineControllerFindOneResponses = {
+    200: RoutineResponseDto;
+};
+
+export type RoutineControllerFindOneResponse = RoutineControllerFindOneResponses[keyof RoutineControllerFindOneResponses];
+
+export type RoutineControllerUpdateData = {
+    body: UpdateRoutineDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/routines/{id}';
+};
+
+export type RoutineControllerUpdateErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+    /**
+     * 루틴을 찾을 수 없습니다
+     */
+    404: unknown;
+};
+
+export type RoutineControllerUpdateResponses = {
+    /**
+     * 루틴이 성공적으로 수정되었습니다.
+     */
+    200: RoutineResponseDto;
+};
+
+export type RoutineControllerUpdateResponse = RoutineControllerUpdateResponses[keyof RoutineControllerUpdateResponses];
+
+export type RoutineControllerGenerateRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines/generate';
+};
+
+export type RoutineControllerGenerateRoutineErrors = {
+    /**
+     * 인증 토큰이 필요합니다.
+     */
+    401: unknown;
+};
+
+export type RoutineControllerGenerateRoutineResponses = {
+    201: RoutineResponseDto;
+};
+
+export type RoutineControllerGenerateRoutineResponse = RoutineControllerGenerateRoutineResponses[keyof RoutineControllerGenerateRoutineResponses];
+
+export type RoutineControllerGetLatestRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines/latest';
+};
+
+export type RoutineControllerGetLatestRoutineResponses = {
+    200: RoutineResponseDto;
+};
+
+export type RoutineControllerGetLatestRoutineResponse = RoutineControllerGetLatestRoutineResponses[keyof RoutineControllerGetLatestRoutineResponses];

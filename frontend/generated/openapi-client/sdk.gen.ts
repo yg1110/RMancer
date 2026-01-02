@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DashboardControllerGetLatestDataData, DashboardControllerGetLatestDataErrors, DashboardControllerGetLatestDataResponses, GoalProfileControllerCreateData, GoalProfileControllerCreateErrors, GoalProfileControllerCreateResponses, GoalProfileControllerFindOneData, GoalProfileControllerFindOneErrors, GoalProfileControllerFindOneResponses, GoalProfileControllerRemoveData, GoalProfileControllerRemoveErrors, GoalProfileControllerRemoveResponses, GoalProfileControllerUpdateData, GoalProfileControllerUpdateErrors, GoalProfileControllerUpdateResponses, HealthControllerCheckData, HealthControllerCheckResponses, InbodyControllerCreateData, InbodyControllerCreateErrors, InbodyControllerCreateResponses, InbodyControllerFindAllData, InbodyControllerFindAllErrors, InbodyControllerFindAllResponses, InbodyControllerFindOneData, InbodyControllerFindOneErrors, InbodyControllerFindOneResponses, InbodyControllerRemoveData, InbodyControllerRemoveErrors, InbodyControllerRemoveResponses, InbodyControllerUpdateData, InbodyControllerUpdateErrors, InbodyControllerUpdateResponses, OneRmControllerCreateData, OneRmControllerCreateErrors, OneRmControllerCreateResponses, OneRmControllerFindAllOneRmObjectData, OneRmControllerFindAllOneRmObjectErrors, OneRmControllerFindAllOneRmObjectResponses, OneRmControllerFindOneData, OneRmControllerFindOneErrors, OneRmControllerFindOneResponses, OneRmControllerRemoveData, OneRmControllerRemoveErrors, OneRmControllerRemoveResponses, OneRmControllerUpdateData, OneRmControllerUpdateErrors, OneRmControllerUpdateResponses, RoutineControllerCreateData, RoutineControllerCreateErrors, RoutineControllerCreateLogData, RoutineControllerCreateLogErrors, RoutineControllerCreateLogResponses, RoutineControllerCreateRecommendedData, RoutineControllerCreateRecommendedErrors, RoutineControllerCreateRecommendedResponses, RoutineControllerCreateResponses, RoutineControllerFindAllData, RoutineControllerFindAllErrors, RoutineControllerFindAllResponses, RoutineControllerFindLogsByDayData, RoutineControllerFindLogsByDayErrors, RoutineControllerFindLogsByDayResponses, RoutineControllerFindOneData, RoutineControllerFindOneErrors, RoutineControllerFindOneResponses, RoutineControllerGetLatestRoutineData, RoutineControllerGetLatestRoutineErrors, RoutineControllerGetLatestRoutineResponses, RoutineControllerRemoveData, RoutineControllerRemoveErrors, RoutineControllerRemoveLogData, RoutineControllerRemoveLogErrors, RoutineControllerRemoveLogResponses, RoutineControllerRemoveResponses, RoutineControllerUpdateData, RoutineControllerUpdateErrors, RoutineControllerUpdateResponses } from './types.gen';
+import type { DashboardControllerGetLatestDataData, DashboardControllerGetLatestDataErrors, DashboardControllerGetLatestDataResponses, GoalProfileControllerCreateData, GoalProfileControllerCreateErrors, GoalProfileControllerCreateResponses, GoalProfileControllerFindOneData, GoalProfileControllerFindOneErrors, GoalProfileControllerFindOneResponses, GoalProfileControllerRemoveData, GoalProfileControllerRemoveErrors, GoalProfileControllerRemoveResponses, GoalProfileControllerUpdateData, GoalProfileControllerUpdateErrors, GoalProfileControllerUpdateResponses, HealthControllerCheckData, HealthControllerCheckResponses, InbodyControllerCreateData, InbodyControllerCreateErrors, InbodyControllerCreateResponses, InbodyControllerFindAllData, InbodyControllerFindAllErrors, InbodyControllerFindAllResponses, InbodyControllerFindOneData, InbodyControllerFindOneErrors, InbodyControllerFindOneResponses, InbodyControllerRemoveData, InbodyControllerRemoveErrors, InbodyControllerRemoveResponses, InbodyControllerUpdateData, InbodyControllerUpdateErrors, InbodyControllerUpdateResponses, OneRmControllerCreateData, OneRmControllerCreateErrors, OneRmControllerCreateResponses, OneRmControllerFindAllOneRmObjectData, OneRmControllerFindAllOneRmObjectErrors, OneRmControllerFindAllOneRmObjectResponses, OneRmControllerFindOneData, OneRmControllerFindOneErrors, OneRmControllerFindOneResponses, OneRmControllerRemoveData, OneRmControllerRemoveErrors, OneRmControllerRemoveResponses, OneRmControllerUpdateData, OneRmControllerUpdateErrors, OneRmControllerUpdateResponses, RoutineControllerCreateData, RoutineControllerCreateErrors, RoutineControllerCreateResponses, RoutineControllerFindAllData, RoutineControllerFindAllErrors, RoutineControllerFindAllResponses, RoutineControllerFindOneData, RoutineControllerFindOneErrors, RoutineControllerFindOneResponses, RoutineControllerGenerateRoutineData, RoutineControllerGenerateRoutineErrors, RoutineControllerGenerateRoutineResponses, RoutineControllerGetLatestRoutineData, RoutineControllerGetLatestRoutineResponses, RoutineControllerRemoveData, RoutineControllerRemoveErrors, RoutineControllerRemoveResponses, RoutineControllerUpdateData, RoutineControllerUpdateErrors, RoutineControllerUpdateResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean> = Options2<TData, ThrowOnError> & {
     /**
@@ -132,126 +132,6 @@ export const goalProfileControllerCreate = <ThrowOnError extends boolean = false
 });
 
 /**
- * 루틴 전체 조회
- *
- * 현재 사용자의 모든 루틴을 최신순으로 조회합니다.
- */
-export const routineControllerFindAll = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerFindAllData, ThrowOnError>) => (options?.client ?? client).get<RoutineControllerFindAllResponses, RoutineControllerFindAllErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines',
-    ...options
-});
-
-/**
- * 루틴 생성
- */
-export const routineControllerCreate = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerCreateData, ThrowOnError>) => (options.client ?? client).post<RoutineControllerCreateResponses, RoutineControllerCreateErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * 최신 루틴 조회
- *
- * 사용자의 최신 루틴을 조회합니다.
- */
-export const routineControllerGetLatestRoutine = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerGetLatestRoutineData, ThrowOnError>) => (options?.client ?? client).get<RoutineControllerGetLatestRoutineResponses, RoutineControllerGetLatestRoutineErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/latest',
-    ...options
-});
-
-/**
- * 루틴 삭제
- *
- * 특정 루틴을 삭제합니다.
- */
-export const routineControllerRemove = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<RoutineControllerRemoveResponses, RoutineControllerRemoveErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{id}',
-    ...options
-});
-
-/**
- * 루틴 단일 조회
- *
- * 특정 루틴의 상세 정보를 조회합니다.
- */
-export const routineControllerFindOne = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerFindOneData, ThrowOnError>) => (options.client ?? client).get<RoutineControllerFindOneResponses, RoutineControllerFindOneErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{id}',
-    ...options
-});
-
-/**
- * 루틴 수정
- *
- * 기존 루틴의 정보를 수정합니다.
- */
-export const routineControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<RoutineControllerUpdateResponses, RoutineControllerUpdateErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{id}',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * 루틴 일차 로그 조회
- *
- * 특정 루틴 일차의 모든 로그를 조회합니다.
- */
-export const routineControllerFindLogsByDay = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerFindLogsByDayData, ThrowOnError>) => (options.client ?? client).get<RoutineControllerFindLogsByDayResponses, RoutineControllerFindLogsByDayErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{routineId}/days/{dayId}/logs',
-    ...options
-});
-
-/**
- * 루틴 로그 생성/수정
- *
- * 특정 날짜의 루틴 일차 수행 로그를 생성하거나 수정합니다.
- */
-export const routineControllerCreateLog = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerCreateLogData, ThrowOnError>) => (options.client ?? client).post<RoutineControllerCreateLogResponses, RoutineControllerCreateLogErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{routineId}/days/{dayId}/logs',
-    ...options,
-    headers: {
-        'Content-Type': 'application/json',
-        ...options.headers
-    }
-});
-
-/**
- * 루틴 로그 삭제
- *
- * 특정 날짜의 루틴 일차 수행 로그를 삭제합니다.
- */
-export const routineControllerRemoveLog = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerRemoveLogData, ThrowOnError>) => (options.client ?? client).delete<RoutineControllerRemoveLogResponses, RoutineControllerRemoveLogErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/{routineId}/days/{dayId}/logs/{date}',
-    ...options
-});
-
-/**
- * 추천 루틴 생성
- *
- * 사용자의 GoalProfile(목표/경력/주당빈도)와 최신 1RM 데이터를 기반으로 추천 루틴을 생성합니다.
- */
-export const routineControllerCreateRecommended = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerCreateRecommendedData, ThrowOnError>) => (options?.client ?? client).post<RoutineControllerCreateRecommendedResponses, RoutineControllerCreateRecommendedErrors, ThrowOnError>({
-    security: [{ scheme: 'bearer', type: 'http' }],
-    url: '/routines/recommended',
-    ...options
-});
-
-/**
  * 1RM 기록 요약 조회
  *
  * 현재 사용자의 각 운동 종류(BENCH_PRESS, BACK_SQUAT, DEADLIFT, OVERHEAD_PRESS)에 대한 최신 1RM 기록을 객체로 반환합니다. 각 값이 없으면 0으로 반환합니다.
@@ -329,3 +209,86 @@ export const dashboardControllerGetLatestData = <ThrowOnError extends boolean = 
  * 서버가 정상적으로 실행 중인지 확인합니다.
  */
 export const healthControllerCheck = <ThrowOnError extends boolean = false>(options?: Options<HealthControllerCheckData, ThrowOnError>) => (options?.client ?? client).get<HealthControllerCheckResponses, unknown, ThrowOnError>({ url: '/health', ...options });
+
+/**
+ * 루틴 전체 조회
+ *
+ * 현재 사용자의 모든 루틴을 최신순으로 조회합니다.
+ */
+export const routineControllerFindAll = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerFindAllData, ThrowOnError>) => (options?.client ?? client).get<RoutineControllerFindAllResponses, RoutineControllerFindAllErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines',
+    ...options
+});
+
+/**
+ * 루틴 생성
+ */
+export const routineControllerCreate = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerCreateData, ThrowOnError>) => (options.client ?? client).post<RoutineControllerCreateResponses, RoutineControllerCreateErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * 루틴 삭제
+ *
+ * 특정 루틴을 삭제합니다.
+ */
+export const routineControllerRemove = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerRemoveData, ThrowOnError>) => (options.client ?? client).delete<RoutineControllerRemoveResponses, RoutineControllerRemoveErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/{id}',
+    ...options
+});
+
+/**
+ * 루틴 단일 조회
+ *
+ * 특정 루틴의 상세 정보를 조회합니다.
+ */
+export const routineControllerFindOne = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerFindOneData, ThrowOnError>) => (options.client ?? client).get<RoutineControllerFindOneResponses, RoutineControllerFindOneErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/{id}',
+    ...options
+});
+
+/**
+ * 루틴 수정
+ *
+ * 기존 루틴의 정보를 수정합니다.
+ */
+export const routineControllerUpdate = <ThrowOnError extends boolean = false>(options: Options<RoutineControllerUpdateData, ThrowOnError>) => (options.client ?? client).patch<RoutineControllerUpdateResponses, RoutineControllerUpdateErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * 루틴 생성
+ *
+ * 거인의 비밀 루틴을 생성합니다.
+ */
+export const routineControllerGenerateRoutine = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerGenerateRoutineData, ThrowOnError>) => (options?.client ?? client).post<RoutineControllerGenerateRoutineResponses, RoutineControllerGenerateRoutineErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/generate',
+    ...options
+});
+
+/**
+ * 최신 루틴 조회
+ *
+ * 현재 사용자의 최신 루틴을 조회합니다.
+ */
+export const routineControllerGetLatestRoutine = <ThrowOnError extends boolean = false>(options?: Options<RoutineControllerGetLatestRoutineData, ThrowOnError>) => (options?.client ?? client).get<RoutineControllerGetLatestRoutineResponses, unknown, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/routines/latest',
+    ...options
+});

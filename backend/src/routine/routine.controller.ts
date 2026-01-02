@@ -20,8 +20,6 @@ import { RoutineService } from './routine.service';
 import { CreateRoutineDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
 import { RoutineResponseDto } from './dto/routine-response.dto';
-import { CreateRoutineLogDto } from './dto/create-routine-log.dto';
-import { RoutineLogResponseDto } from './dto/routine-log-response.dto';
 import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { ERROR_MESSAGE } from 'src/common/error.constants';
 import { ROUTINE_ERROR_MESSAGE } from './routine.constants';
@@ -77,33 +75,6 @@ export class RoutineController {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
     return this.routineService.findAll(userId);
-  }
-
-  @Get('latest')
-  @ApiOperation({
-    summary: '최신 루틴 조회',
-    description: '사용자의 최신 루틴을 조회합니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    type: RoutineResponseDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: ERROR_MESSAGE.UNAUTHORIZED,
-  })
-  @ApiResponse({
-    status: 404,
-    description: ROUTINE_ERROR_MESSAGE.ROUTINE_NOT_FOUND,
-  })
-  async getLatestRoutine(
-    @Request() req: Express.Request,
-  ): Promise<RoutineResponseDto | null> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.getLatestRoutine(userId);
   }
 
   @Get(':id')
@@ -191,96 +162,10 @@ export class RoutineController {
     return this.routineService.remove(id, userId);
   }
 
-  @Post(':routineId/days/:dayId/logs')
+  @Post('generate')
   @ApiOperation({
-    summary: '루틴 로그 생성/수정',
-    description: '특정 날짜의 루틴 일차 수행 로그를 생성하거나 수정합니다.',
-  })
-  @ApiResponse({
-    status: 201,
-    type: RoutineLogResponseDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: ERROR_MESSAGE.UNAUTHORIZED,
-  })
-  @ApiResponse({
-    status: 404,
-    description: ROUTINE_ERROR_MESSAGE.ROUTINE_DAY_NOT_FOUND,
-  })
-  async createLog(
-    @Request() req: Express.Request,
-    @Param('dayId') dayId: string,
-    @Body() createDto: CreateRoutineLogDto,
-  ): Promise<RoutineLogResponseDto> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.createLog(dayId, userId, createDto);
-  }
-
-  @Get(':routineId/days/:dayId/logs')
-  @ApiOperation({
-    summary: '루틴 일차 로그 조회',
-    description: '특정 루틴 일차의 모든 로그를 조회합니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    type: [RoutineLogResponseDto],
-  })
-  @ApiResponse({
-    status: 401,
-    description: ERROR_MESSAGE.UNAUTHORIZED,
-  })
-  @ApiResponse({
-    status: 404,
-    description: ROUTINE_ERROR_MESSAGE.ROUTINE_DAY_NOT_FOUND,
-  })
-  async findLogsByDay(
-    @Request() req: Express.Request,
-    @Param('dayId') dayId: string,
-  ): Promise<RoutineLogResponseDto[]> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.findLogsByDay(dayId, userId);
-  }
-
-  @Delete(':routineId/days/:dayId/logs/:date')
-  @ApiOperation({
-    summary: '루틴 로그 삭제',
-    description: '특정 날짜의 루틴 일차 수행 로그를 삭제합니다.',
-  })
-  @ApiResponse({
-    status: 200,
-  })
-  @ApiResponse({
-    status: 401,
-    description: ERROR_MESSAGE.UNAUTHORIZED,
-  })
-  @ApiResponse({
-    status: 404,
-    description: ROUTINE_ERROR_MESSAGE.ROUTINE_LOG_NOT_FOUND,
-  })
-  async removeLog(
-    @Request() req: Express.Request,
-    @Param('dayId') dayId: string,
-    @Param('date') date: string,
-  ): Promise<void> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.removeLog(dayId, date, userId);
-  }
-
-  @Post('recommended')
-  @ApiOperation({
-    summary: '추천 루틴 생성',
-    description:
-      '사용자의 GoalProfile(목표/경력/주당빈도)와 최신 1RM 데이터를 기반으로 추천 루틴을 생성합니다.',
+    summary: '루틴 생성',
+    description: '거인의 비밀 루틴을 생성합니다.',
   })
   @ApiResponse({
     status: 201,
@@ -290,13 +175,32 @@ export class RoutineController {
     status: 401,
     description: ERROR_MESSAGE.UNAUTHORIZED,
   })
-  async createRecommended(
+  async generateRoutine(
     @Request() req: Express.Request,
   ): Promise<RoutineResponseDto> {
     const userId = req.user?.sub;
     if (!userId) {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
-    return this.routineService.createRecommended(userId);
+    return this.routineService.generateRoutine(userId);
+  }
+
+  @Get('latest')
+  @ApiOperation({
+    summary: '최신 루틴 조회',
+    description: '현재 사용자의 최신 루틴을 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    type: RoutineResponseDto,
+  })
+  async getLatestRoutine(
+    @Request() req: Express.Request,
+  ): Promise<RoutineResponseDto> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
+    }
+    return this.routineService.getLatestRoutine(userId);
   }
 }

@@ -3,19 +3,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateRoutineDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
 import { RoutineResponseDto } from './dto/routine-response.dto';
-import { CreateRoutineLogDto } from './dto/create-routine-log.dto';
-import { RoutineLogResponseDto } from './dto/routine-log-response.dto';
 import { ROUTINE_ERROR_MESSAGE } from './routine.constants';
-import { RoutineEngine } from './engine/routine-engine';
-import { ExperienceLevel, GoalType, OneRmLift } from '@prisma/client';
-import { buildLatestOneRmMapWithFallback } from './engine/one-rm.util';
+import { GIANT_ROUTINE } from './constants/giant.constants';
 
 @Injectable()
 export class RoutineService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly routineEngine: RoutineEngine,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(
     userId: string,
@@ -28,28 +21,20 @@ export class RoutineService {
         goalType: createDto.goalType,
         experienceLevel: createDto.experienceLevel,
         weeklyFrequency: createDto.weeklyFrequency,
-        planWeeks: createDto.planWeeks,
-        sourceVersion: createDto.sourceVersion,
         days: {
           create: createDto.days.map(day => ({
             dayIndex: day.dayIndex,
             name: day.name,
-            exercises: {
-              create: day.exercises.map(exercise => ({
+            bodyPart: day.bodyPart,
+            subExercises: {
+              create: day.subExercises.map(exercise => ({
                 order: exercise.order,
-                exerciseKey: exercise.exerciseKey,
-                displayName: exercise.displayName,
                 sets: exercise.sets,
-                repsMin: exercise.repsMin,
-                repsMax: exercise.repsMax,
-                restSec: exercise.restSec,
-                rirMin: exercise.rirMin,
-                rirMax: exercise.rirMax,
-                anchorLift: exercise.anchorLift,
-                pctMin: exercise.pctMin,
-                pctMax: exercise.pctMax,
-                loadMethod: exercise.loadMethod,
-                memo: exercise.memo,
+                reps: exercise.reps,
+                oneRmPct: exercise.oneRmPct,
+                exerciseName: exercise.exerciseName,
+                bodyPart: exercise.bodyPart,
+                chooseOneExercises: exercise.chooseOneExercises,
               })),
             },
           })),
@@ -58,11 +43,7 @@ export class RoutineService {
       include: {
         days: {
           include: {
-            exercises: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
+            subExercises: true,
           },
           orderBy: {
             dayIndex: 'asc',
@@ -82,11 +63,7 @@ export class RoutineService {
       include: {
         days: {
           include: {
-            exercises: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
+            subExercises: true,
           },
           orderBy: {
             dayIndex: 'asc',
@@ -110,11 +87,7 @@ export class RoutineService {
       include: {
         days: {
           include: {
-            exercises: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
+            subExercises: true,
           },
           orderBy: {
             dayIndex: 'asc',
@@ -150,11 +123,41 @@ export class RoutineService {
     if (updateDto.weeklyFrequency !== undefined) {
       updateData.weeklyFrequency = updateDto.weeklyFrequency;
     }
-    if (updateDto.planWeeks !== undefined) {
-      updateData.planWeeks = updateDto.planWeeks;
-    }
-    if (updateDto.sourceVersion !== undefined) {
-      updateData.sourceVersion = updateDto.sourceVersion;
+
+    // days가 제공된 경우, 기존 days를 모두 삭제하고 새로 생성
+    if (updateDto.days !== undefined) {
+      // 기존 days와 subExercises를 모두 삭제
+      await this.prisma.routineSubExercise.deleteMany({
+        where: {
+          routineDay: {
+            routineId: id,
+          },
+        },
+      });
+      await this.prisma.routineDay.deleteMany({
+        where: {
+          routineId: id,
+        },
+      });
+
+      // 새로운 days와 subExercises 생성
+      updateData.days = {
+        create: updateDto.days.map(day => ({
+          dayIndex: day.dayIndex,
+          name: day.name,
+          bodyPart: day.bodyPart,
+          subExercises: {
+            create: day.subExercises.map(exercise => ({
+              order: exercise.order,
+              sets: exercise.sets,
+              reps: exercise.reps,
+              oneRmPct: exercise.oneRmPct,
+              exerciseName: exercise.exerciseName,
+              chooseOneExercises: exercise.chooseOneExercises,
+            })),
+          },
+        })),
+      };
     }
 
     const routine = await this.prisma.routine.update({
@@ -165,11 +168,7 @@ export class RoutineService {
       include: {
         days: {
           include: {
-            exercises: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
+            subExercises: true,
           },
           orderBy: {
             dayIndex: 'asc',
@@ -184,6 +183,7 @@ export class RoutineService {
   async remove(id: string, userId: string): Promise<void> {
     await this.findOne(id, userId);
 
+    // Cascade delete로 인해 자동으로 days와 subExercises도 삭제됨
     await this.prisma.routine.delete({
       where: {
         id,
@@ -191,212 +191,27 @@ export class RoutineService {
     });
   }
 
-  async createLog(
-    routineDayId: string,
-    userId: string,
-    createDto: CreateRoutineLogDto,
-  ): Promise<RoutineLogResponseDto> {
-    // 루틴 일차가 존재하고 사용자 소유인지 확인
-    const routineDay = await this.prisma.routineDay.findFirst({
-      where: {
-        id: routineDayId,
-        routine: {
-          userId,
-        },
-      },
-    });
-
-    if (!routineDay) {
-      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_DAY_NOT_FOUND);
-    }
-
-    const log = await this.prisma.routineLog.upsert({
-      where: {
-        routineDayId_date: {
-          routineDayId,
-          date: new Date(createDto.date),
-        },
-      },
-      update: {
-        isCompleted: createDto.isCompleted ?? false,
-        completedAt: createDto.isCompleted === true ? new Date() : undefined,
-      },
-      create: {
-        routineDayId,
-        date: new Date(createDto.date),
-        isCompleted: createDto.isCompleted ?? false,
-        completedAt: createDto.isCompleted === true ? new Date() : undefined,
-      },
-    });
-
-    return log;
+  async generateRoutine(userId: string): Promise<RoutineResponseDto> {
+    const routine = await this.create(userId, GIANT_ROUTINE);
+    return routine;
   }
 
-  async findLogsByDay(
-    routineDayId: string,
-    userId: string,
-  ): Promise<RoutineLogResponseDto[]> {
-    // 루틴 일차가 존재하고 사용자 소유인지 확인
-    const routineDay = await this.prisma.routineDay.findFirst({
-      where: {
-        id: routineDayId,
-        routine: {
-          userId,
-        },
-      },
-    });
-
-    if (!routineDay) {
-      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_DAY_NOT_FOUND);
-    }
-
-    const logs = await this.prisma.routineLog.findMany({
-      where: {
-        routineDayId,
-      },
-      orderBy: {
-        date: 'desc',
-      },
-    });
-
-    return logs;
-  }
-
-  async removeLog(
-    routineDayId: string,
-    date: string,
-    userId: string,
-  ): Promise<void> {
-    // 루틴 일차가 존재하고 사용자 소유인지 확인
-    const routineDay = await this.prisma.routineDay.findFirst({
-      where: {
-        id: routineDayId,
-        routine: {
-          userId,
-        },
-      },
-    });
-
-    if (!routineDay) {
-      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_DAY_NOT_FOUND);
-    }
-
-    const log = await this.prisma.routineLog.findUnique({
-      where: {
-        routineDayId_date: {
-          routineDayId,
-          date: new Date(date),
-        },
-      },
-    });
-
-    if (!log) {
-      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_LOG_NOT_FOUND);
-    }
-
-    await this.prisma.routineLog.delete({
-      where: {
-        routineDayId_date: {
-          routineDayId,
-          date: new Date(date),
-        },
-      },
-    });
-  }
-
-  async createRecommended(userId: string): Promise<RoutineResponseDto> {
-    // 1) GoalProfile 조회
-    const profile = await this.prisma.goalProfile.findUnique({
-      where: { userId },
-    });
-
-    const goalType: GoalType = profile?.goalType ?? GoalType.MUSCLE_GAIN;
-    const planWeeks = profile?.defaultPlanWeeks ?? 1;
-    const freqRaw = profile?.weeklyFrequency ?? 3;
-    const weeklyFrequency = ([3, 4, 5, 6].includes(freqRaw) ? freqRaw : 3) as
-      | 3
-      | 4
-      | 5
-      | 6;
-
-    // 2) 1RM 조회(없어도 OK) → 누락은 0으로 채움
-    const oneRmRecords = await this.prisma.oneRmRecord.findMany({
-      where: { userId },
-      orderBy: { measuredAt: 'desc' },
-    });
-    const { oneRmMap, missing } = buildLatestOneRmMapWithFallback(
-      oneRmRecords,
-      0,
-    );
-
-    // 3) 데이터가 부족하면 “완전 초보”로 강제
-    // - 기준: 4대 1RM 중 하나라도 0이면 초보 루틴으로 단순화
-    const forceBeginner = missing.length > 0;
-
-    const experienceLevel: ExperienceLevel = forceBeginner
-      ? ExperienceLevel.BEGINNER
-      : (profile?.experienceLevel ?? ExperienceLevel.BEGINNER);
-
-    const finalWeeklyFrequency: 3 | 4 | 5 | 6 = forceBeginner
-      ? 3
-      : weeklyFrequency;
-
-    const title = forceBeginner
-      ? '추천 루틴 (초보/데이터 미입력)'
-      : '추천 루틴';
-    const sourceVersion = forceBeginner ? 'rules-v1.0-fallback' : 'rules-v1.0';
-
-    // 4) 엔진으로 dto 생성
-    const dto = this.routineEngine.generate({
-      title,
-      goalType,
-      experienceLevel,
-      weeklyFrequency: finalWeeklyFrequency,
-      planWeeks,
-      sourceVersion,
-      oneRmMap,
-      randomizeExercisePick: false,
-    }) as CreateRoutineDto;
-
-    // 5) 누락된 1RM이 있는 anchorLift는 memo로 표시(선택이지만 UX 좋아짐)
-    //    - 1RM=0이면 화면 중량은 0이 될 수 있으니, %만 참고하도록 안내
-    const missingSet = new Set<OneRmLift>(missing);
-    for (const day of dto.days) {
-      for (const ex of day.exercises) {
-        if (missingSet.has(ex.anchorLift)) {
-          ex.memo =
-            '1RM 미입력(0) 상태입니다. 중량은 계산되지 않으며 %1RM 기준으로만 진행하세요. 1RM 입력 시 중량이 계산됩니다.';
-        }
-      }
-    }
-
-    // 6) 기존 create 재사용하여 저장
-    return this.create(userId, dto);
-  }
-
-  async getLatestRoutine(userId: string): Promise<RoutineResponseDto | null> {
-    const latestRoutine = await this.prisma.routine.findFirst({
+  async getLatestRoutine(userId: string): Promise<RoutineResponseDto> {
+    const routine = await this.prisma.routine.findFirst({
       where: {
         userId,
       },
       include: {
         days: {
           include: {
-            exercises: {
-              orderBy: {
-                order: 'asc',
-              },
-            },
-          },
-          orderBy: {
-            dayIndex: 'asc',
+            subExercises: true,
           },
         },
       },
-      orderBy: {
-        createdAt: 'desc',
-      },
     });
-    return latestRoutine as RoutineResponseDto | null;
+    if (!routine) {
+      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_NOT_FOUND);
+    }
+    return routine;
   }
 }

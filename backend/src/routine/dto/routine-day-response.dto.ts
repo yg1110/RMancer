@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { RoutineExerciseResponseDto } from './routine-exercise-response.dto';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { BodyPart } from '@prisma/client';
+import { RoutineSubExerciseResponseDto } from './routine-sub-exercise-response.dto';
 
 export class RoutineDayResponseDto {
   @ApiProperty({
@@ -15,20 +16,40 @@ export class RoutineDayResponseDto {
   routineId: string;
 
   @ApiProperty({
-    description: '주간 내 순서(0..weeklyFrequency-1)',
+    description: '요일 인덱스',
     example: 0,
   })
   dayIndex: number;
 
   @ApiProperty({
-    description: 'Day 이름(예: "Upper A")',
+    description: '요일 이름',
     example: 'Upper A',
   })
   name: string;
 
-  @ApiProperty({
-    description: '운동 항목 목록',
-    type: [RoutineExerciseResponseDto],
+  @ApiPropertyOptional({
+    description: '운동 부위',
+    enum: BodyPart,
+    example: 'CHEST',
   })
-  exercises: RoutineExerciseResponseDto[];
+  bodyPart?: BodyPart | null;
+
+  @ApiProperty({
+    description: '운동 목록',
+    type: [RoutineSubExerciseResponseDto],
+  })
+  subExercises: RoutineSubExerciseResponseDto[];
+
+  @ApiProperty({
+    description: '생성일시',
+    example: '2025-12-28T00:00:00.000Z',
+  })
+  createdAt: Date;
+
+  @ApiProperty({
+    description: '수정일시',
+    example: '2025-12-28T00:00:00.000Z',
+  })
+  updatedAt: Date;
 }
+

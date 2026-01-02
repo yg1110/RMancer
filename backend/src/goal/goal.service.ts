@@ -29,7 +29,6 @@ export class GoalProfileService {
         goalType: createDto.goalType,
         experienceLevel: createDto.experienceLevel,
         weeklyFrequency: createDto.weeklyFrequency,
-        defaultPlanWeeks: createDto.defaultPlanWeeks ?? 1,
       },
     });
 
@@ -61,9 +60,6 @@ export class GoalProfileService {
     }
     if (updateDto.weeklyFrequency !== undefined) {
       updateData.weeklyFrequency = updateDto.weeklyFrequency;
-    }
-    if (updateDto.defaultPlanWeeks !== undefined) {
-      updateData.defaultPlanWeeks = updateDto.defaultPlanWeeks;
     }
 
     const goalProfile = await this.prisma.goalProfile.update({

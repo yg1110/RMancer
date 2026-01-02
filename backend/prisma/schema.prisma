@@ -107,7 +107,6 @@ model GoalProfile {
   goalType         GoalType        @map("goal_type")
   experienceLevel  ExperienceLevel @map("experience_level")
   weeklyFrequency  Int             @map("weekly_frequency")
-  defaultPlanWeeks Int             @map("default_plan_weeks")
   updatedAt        DateTime        @updatedAt @map("updated_at")
   createdAt        DateTime        @default(now()) @map("created_at")
 
@@ -140,37 +139,12 @@ model OneRmRecord {
   @@map("one_rm_records")
 }
 
-model Routine {
-  id              String          @id @default(cuid())
-  userId          String          @map("user_id")
-  title           String
-  goalType        GoalType        @map("goal_type")
-  experienceLevel ExperienceLevel @map("experience_level")
-  weeklyFrequency Int             @map("weekly_frequency")
-  planWeeks       Int             @map("plan_weeks")
-  sourceVersion   String          @map("source_version")
-  createdAt       DateTime        @default(now()) @map("created_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  days RoutineDay[]
-
-  @@index([userId, createdAt])
-  @@map("routines")
-}
-
-model RoutineDay {
-  id        String @id @default(cuid())
-
-  routineId String @map("routine_id")
-  dayIndex  Int    @map("day_index")
-  name      String
-  routine   Routine          @relation(fields: [routineId], references: [id], onDelete: Cascade)
-  exercises RoutineExercise[]
-  logs      RoutineLog[]
-
-  @@index([routineId, dayIndex])
-
-  @@map("routine_days")
+enum BodyPart {
+  CHEST
+  BACK
+  LEGS
+  SHOULDERS
+  ARMS
 }
 
 enum LoadMethod {
@@ -178,40 +152,55 @@ enum LoadMethod {
   RIR_ONLY
   BODYWEIGHT
 }
-model RoutineExercise {
-  id           String @id @default(cuid())
 
-  routineDayId String @map("routine_day_id")
-  order        Int
-  exerciseKey  String @map("exercise_key")
-  displayName  String @map("display_name")
-  sets         Int
-  repsMin      Int    @map("reps_min")
-  repsMax      Int    @map("reps_max")
-  restSec      Int    @map("rest_sec")
-  rirMin       Int    @map("rir_min")
-  rirMax       Int    @map("rir_max")
-  memo         String?
-  pctMin       Float     @map("pct_min")
-  pctMax       Float     @map("pct_max")
+model Routine {
+  id               String          @id @default(cuid())
+  userId           String          @map("user_id")
+  title            String
+  goalType         GoalType        @map("goal_type")
+  experienceLevel  ExperienceLevel @map("experience_level")
+  weeklyFrequency  Int             @map("weekly_frequency")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
 
-  loadMethod   LoadMethod @default(PERCENT_1RM) @map("load_method")
-  anchorLift   OneRmLift @map("anchor_lift")
-  day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  days RoutineDay[]
 
-  @@index([routineDayId, order])
-  @@map("routine_exercises")
+  @@index([userId])
+  @@map("routines")
 }
 
-model RoutineLog {
-  id           String   @id @default(cuid())
-  routineDayId String   @map("routine_day_id")
-  date         DateTime
-  isCompleted  Boolean  @default(false) @map("is_completed")
-  completedAt  DateTime? @map("completed_at")
+model RoutineDay {
+  id               String    @id @default(cuid())
+  routineId        String    @map("routine_id")
+  dayIndex         Int       @map("day_index")
+  name             String
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
 
-  day RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+  routine Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  subExercises RoutineSubExercise[]
 
-  @@unique([routineDayId, date])
-  @@map("routine_logs")
+  @@index([routineId, dayIndex])
+  @@map("routine_days")
+}
+
+model RoutineSubExercise {
+  id               String          @id @default(cuid())
+  routineDayId     String          @map("routine_day_id")
+  order            Int
+  sets             Int?
+  reps             Int?
+  oneRmPct         Float?          @map("one_rm_pct")
+  exerciseName     String?         @map("exercise_name")
+  bodyPart         BodyPart? @map("body_part")
+  memo             String?       @db.Text @map("memo")
+  chooseOneExercises String?       @db.Text @map("choose_one_exercises")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+
+  routineDay RoutineDay @relation(fields: [routineDayId], references: [id], onDelete: Cascade)
+
+  @@index([routineDayId, order])
+  @@map("routine_sub_exercises")
 }

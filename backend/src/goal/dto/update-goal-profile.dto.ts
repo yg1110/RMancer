@@ -32,16 +32,4 @@ export class UpdateGoalProfileDto {
   @Min(3)
   @Max(6)
   weeklyFrequency?: number;
-
-  @ApiPropertyOptional({
-    description: '기본 추천 기간(주) (1~4 권장)',
-    example: 1,
-    minimum: 1,
-    maximum: 4,
-  })
-  @IsOptional()
-  @IsInt()
-  @Min(1)
-  @Max(4)
-  defaultPlanWeeks?: number;
 }

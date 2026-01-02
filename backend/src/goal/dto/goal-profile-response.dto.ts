@@ -35,12 +35,6 @@ export class GoalProfileResponseDto {
   weeklyFrequency: number;
 
   @ApiProperty({
-    description: '기본 추천 기간(주)',
-    example: 1,
-  })
-  defaultPlanWeeks: number;
-
-  @ApiProperty({
     description: '수정일시',
     example: '2025-12-28T00:00:00.000Z',
   })
