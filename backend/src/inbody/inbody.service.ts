@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateInbodyRecordDto } from './dto/create-inbody-record.dto';
 import { UpdateInbodyRecordDto } from './dto/update-inbody-record.dto';
@@ -13,19 +17,25 @@ export class InbodyService {
     userId: string,
     createDto: CreateInbodyRecordDto,
   ): Promise<InbodyRecordResponseDto> {
-    const record = await this.prisma.inbodyRecord.create({
-      data: {
-        userId,
-        measuredAt: new Date(createDto.measuredAt),
-        heightCm: createDto.heightCm,
-        weightKg: createDto.weightKg,
-        skeletalMuscleKg: createDto.skeletalMuscleKg,
-        bodyFatKg: createDto.bodyFatKg,
-        bodyFatPct: createDto.bodyFatPct,
-      },
-    });
+    try {
+      const record = await this.prisma.inbodyRecord.create({
+        data: {
+          userId,
+          measuredAt: new Date(createDto.measuredAt),
+          heightCm: createDto.heightCm,
+          weightKg: createDto.weightKg,
+          skeletalMuscleKg: createDto.skeletalMuscleKg,
+          bodyFatKg: createDto.bodyFatKg,
+          bodyFatPct: createDto.bodyFatPct,
+        },
+      });
 
-    return record;
+      return record;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        INBODY_ERROR_MESSAGE.INBODY_RECORD_CREATE_FAILED,
+      );
+    }
   }
 
   async findAll(userId: string): Promise<InbodyRecordResponseDto[]> {

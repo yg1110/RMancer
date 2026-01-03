@@ -5,9 +5,7 @@ import {
   goalProfileControllerCreate,
   goalProfileControllerUpdate,
   inbodyControllerCreate,
-  inbodyControllerUpdate,
   oneRmControllerCreate,
-  routineControllerCreateRecommended,
   routineControllerGetLatestRoutine,
 } from '@/generated/openapi-client';
 import {
@@ -15,7 +13,6 @@ import {
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
   UpdateGoalProfileDto,
-  UpdateInbodyRecordDto,
 } from '@/generated/openapi-client/types.gen';
 
 export const createGoalProfile = async (body: CreateGoalProfileDto) => {
@@ -42,7 +39,7 @@ export const getLatestRoutine = async () => {
   const { data, error } = await routineControllerGetLatestRoutine();
   return { data, error };
 };
-export const createRecommendedRoutine = async () => {
-  const { data, error } = await routineControllerCreateRecommended();
-  return { data, error };
-};
+// export const createRecommendedRoutine = async () => {
+//   const { data, error } = await routineControllerCreateRecommended();
+//   return { data, error };
+// };

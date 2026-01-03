@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateRoutineDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
@@ -14,45 +18,51 @@ export class RoutineService {
     userId: string,
     createDto: CreateRoutineDto,
   ): Promise<RoutineResponseDto> {
-    const routine = await this.prisma.routine.create({
-      data: {
-        userId,
-        title: createDto.title,
-        goalType: createDto.goalType,
-        experienceLevel: createDto.experienceLevel,
-        weeklyFrequency: createDto.weeklyFrequency,
-        days: {
-          create: createDto.days.map(day => ({
-            dayIndex: day.dayIndex,
-            name: day.name,
-            bodyPart: day.bodyPart,
-            subExercises: {
-              create: day.subExercises.map(exercise => ({
-                order: exercise.order,
-                sets: exercise.sets,
-                reps: exercise.reps,
-                oneRmPct: exercise.oneRmPct,
-                exerciseName: exercise.exerciseName,
-                bodyPart: exercise.bodyPart,
-                chooseOneExercises: exercise.chooseOneExercises,
-              })),
+    try {
+      const routine = await this.prisma.routine.create({
+        data: {
+          userId,
+          title: createDto.title,
+          goalType: createDto.goalType,
+          experienceLevel: createDto.experienceLevel,
+          weeklyFrequency: createDto.weeklyFrequency,
+          days: {
+            create: createDto.days.map(day => ({
+              dayIndex: day.dayIndex,
+              name: day.name,
+              bodyPart: day.bodyPart,
+              subExercises: {
+                create: day.subExercises.map(exercise => ({
+                  order: exercise.order,
+                  sets: exercise.sets,
+                  reps: exercise.reps,
+                  oneRmPct: exercise.oneRmPct,
+                  exerciseName: exercise.exerciseName,
+                  bodyPart: exercise.bodyPart,
+                  chooseOneExercises: exercise.chooseOneExercises,
+                })),
+              },
+            })),
+          },
+        },
+        include: {
+          days: {
+            include: {
+              subExercises: true,
             },
-          })),
-        },
-      },
-      include: {
-        days: {
-          include: {
-            subExercises: true,
-          },
-          orderBy: {
-            dayIndex: 'asc',
+            orderBy: {
+              dayIndex: 'asc',
+            },
           },
         },
-      },
-    });
+      });
 
-    return routine;
+      return routine;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        ROUTINE_ERROR_MESSAGE.ROUTINE_CREATE_FAILED,
+      );
+    }
   }
 
   async findAll(userId: string): Promise<RoutineResponseDto[]> {

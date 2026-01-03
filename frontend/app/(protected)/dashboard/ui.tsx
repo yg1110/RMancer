@@ -68,8 +68,7 @@ export default function DashboardUI({ isEdit }: { isEdit: boolean }) {
 
   const createInbodyRecordMutation = useMutation({
     mutationFn: async (body: CreateInbodyRecordDto) => {
-      const { data, error } = await api.createInbodyRecord(body);
-      if (error) toast.error(error as string);
+      const { data } = await api.createInbodyRecord(body);
       return data;
     },
     onError: error => {
@@ -132,7 +131,6 @@ export default function DashboardUI({ isEdit }: { isEdit: boolean }) {
           goalType: prefs.goal,
           experienceLevel: prefs.experience,
           weeklyFrequency: prefs.weeklyFrequency,
-          defaultPlanWeeks: 1,
         }),
         createInbodyRecordMutation.mutateAsync({
           measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),

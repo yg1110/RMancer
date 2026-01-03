@@ -13,21 +13,21 @@ export default function ProgramSelectionUI() {
 
   const [loading, setLoading] = useState(false);
 
-  const createRecommendedRoutineMutation = useMutation({
-    mutationFn: async () => {
-      const { data, error } = await api.createRecommendedRoutine();
-      if (error) throw error;
-      return data;
-    },
-    onError: error => {
-      toast.error(toErrorMessage(error));
-    },
-  });
+  // const createRecommendedRoutineMutation = useMutation({
+  //   mutationFn: async () => {
+  //     const { data, error } = await api.createRecommendedRoutine();
+  //     if (error) throw error;
+  //     return data;
+  //   },
+  //   onError: error => {
+  //     toast.error(toErrorMessage(error));
+  //   },
+  // });
 
   const handleSelect = async (program: string) => {
     setLoading(true);
-    const data = await createRecommendedRoutineMutation.mutateAsync();
-    if (data) router.push('/recommendation');
+    // const data = await createRecommendedRoutineMutation.mutateAsync();
+    // if (data) router.push('/recommendation');
     setLoading(false);
   };
 

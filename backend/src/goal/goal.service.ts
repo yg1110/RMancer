@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
@@ -23,16 +24,22 @@ export class GoalProfileService {
         GOAL_PROFILE_ERROR_MESSAGE.GOAL_PROFILE_ALREADY_EXISTS,
       );
     }
-    const goalProfile = await this.prisma.goalProfile.create({
-      data: {
-        userId,
-        goalType: createDto.goalType,
-        experienceLevel: createDto.experienceLevel,
-        weeklyFrequency: createDto.weeklyFrequency,
-      },
-    });
+    try {
+      const goalProfile = await this.prisma.goalProfile.create({
+        data: {
+          userId,
+          goalType: createDto.goalType,
+          experienceLevel: createDto.experienceLevel,
+          weeklyFrequency: createDto.weeklyFrequency,
+        },
+      });
 
-    return goalProfile;
+      return goalProfile;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        GOAL_PROFILE_ERROR_MESSAGE.GOAL_PROFILE_CREATE_FAILED,
+      );
+    }
   }
 
   async findOne(userId: string): Promise<GoalProfileResponseDto | null> {

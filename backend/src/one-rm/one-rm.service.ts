@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOneRmRecordDto } from './dto/create-one-rm-record.dto';
 import { UpdateOneRmRecordDto } from './dto/update-one-rm-record.dto';
@@ -15,18 +19,24 @@ export class OneRmService {
     userId: string,
     createDto: CreateOneRmRecordDto,
   ): Promise<OneRmRecordResponseDto> {
-    const record = await this.prisma.oneRmRecord.create({
-      data: {
-        userId,
-        lift: createDto.lift,
-        oneRmKg: createDto.oneRmKg,
-        measuredAt: createDto.measuredAt
-          ? new Date(createDto.measuredAt)
-          : new Date(),
-      },
-    });
+    try {
+      const record = await this.prisma.oneRmRecord.create({
+        data: {
+          userId,
+          lift: createDto.lift,
+          oneRmKg: createDto.oneRmKg,
+          measuredAt: createDto.measuredAt
+            ? new Date(createDto.measuredAt)
+            : new Date(),
+        },
+      });
 
-    return record;
+      return record;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        ONE_RM_ERROR_MESSAGE.ONE_RM_RECORD_CREATE_FAILED,
+      );
+    }
   }
 
   async findAll(
