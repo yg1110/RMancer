@@ -1,4 +1,3 @@
 export const ERROR_MESSAGE = {
   UNAUTHORIZED: '로그인 후 이용해주세요.',
-  USER_NOT_FOUND: '유저를 찾을 수 없습니다.',
 } as const;
