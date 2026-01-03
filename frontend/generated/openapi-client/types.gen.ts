@@ -485,7 +485,7 @@ export type InbodyControllerFindAllData = {
 
 export type InbodyControllerFindAllErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -505,7 +505,7 @@ export type InbodyControllerCreateData = {
 
 export type InbodyControllerCreateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -527,7 +527,7 @@ export type InbodyControllerRemoveData = {
 
 export type InbodyControllerRemoveErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -551,7 +551,7 @@ export type InbodyControllerFindOneData = {
 
 export type InbodyControllerFindOneErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -577,7 +577,7 @@ export type InbodyControllerUpdateData = {
 
 export type InbodyControllerUpdateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -604,7 +604,7 @@ export type GoalProfileControllerRemoveData = {
 
 export type GoalProfileControllerRemoveErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -626,7 +626,7 @@ export type GoalProfileControllerFindOneData = {
 
 export type GoalProfileControllerFindOneErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -650,7 +650,7 @@ export type GoalProfileControllerUpdateData = {
 
 export type GoalProfileControllerUpdateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -677,7 +677,7 @@ export type GoalProfileControllerCreateData = {
 
 export type GoalProfileControllerCreateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -697,7 +697,7 @@ export type OneRmControllerFindAllOneRmObjectData = {
 
 export type OneRmControllerFindAllOneRmObjectErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -715,7 +715,7 @@ export type OneRmControllerCreateData = {
 
 export type OneRmControllerCreateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -737,7 +737,7 @@ export type OneRmControllerRemoveData = {
 
 export type OneRmControllerRemoveErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -761,7 +761,7 @@ export type OneRmControllerFindOneData = {
 
 export type OneRmControllerFindOneErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -787,7 +787,7 @@ export type OneRmControllerUpdateData = {
 
 export type OneRmControllerUpdateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -814,7 +814,7 @@ export type DashboardControllerGetLatestDataData = {
 
 export type DashboardControllerGetLatestDataErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -853,7 +853,7 @@ export type RoutineControllerFindAllData = {
 
 export type RoutineControllerFindAllErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -873,7 +873,7 @@ export type RoutineControllerCreateData = {
 
 export type RoutineControllerCreateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
@@ -895,7 +895,7 @@ export type RoutineControllerRemoveData = {
 
 export type RoutineControllerRemoveErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -919,7 +919,7 @@ export type RoutineControllerFindOneData = {
 
 export type RoutineControllerFindOneErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -945,7 +945,7 @@ export type RoutineControllerUpdateData = {
 
 export type RoutineControllerUpdateErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
     /**
@@ -972,7 +972,7 @@ export type RoutineControllerGenerateRoutineData = {
 
 export type RoutineControllerGenerateRoutineErrors = {
     /**
-     * 인증 토큰이 필요합니다.
+     * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
