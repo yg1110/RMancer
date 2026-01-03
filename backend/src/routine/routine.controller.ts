@@ -77,6 +77,25 @@ export class RoutineController {
     return this.routineService.findAll(userId);
   }
 
+  @Get('latest')
+  @ApiOperation({
+    summary: '최신 루틴 조회',
+    description: '현재 사용자의 최신 루틴을 조회합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    type: RoutineResponseDto,
+  })
+  async getLatestRoutine(
+    @Request() req: Express.Request,
+  ): Promise<RoutineResponseDto> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
+    }
+    return this.routineService.getLatestRoutine(userId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: '루틴 단일 조회',
@@ -160,47 +179,5 @@ export class RoutineController {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
     return this.routineService.remove(id, userId);
-  }
-
-  @Post('generate')
-  @ApiOperation({
-    summary: '루틴 생성',
-    description: '거인의 비밀 루틴을 생성합니다.',
-  })
-  @ApiResponse({
-    status: 201,
-    type: RoutineResponseDto,
-  })
-  @ApiResponse({
-    status: 401,
-    description: ERROR_MESSAGE.UNAUTHORIZED,
-  })
-  async generateRoutine(
-    @Request() req: Express.Request,
-  ): Promise<RoutineResponseDto> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.generateRoutine(userId);
-  }
-
-  @Get('latest')
-  @ApiOperation({
-    summary: '최신 루틴 조회',
-    description: '현재 사용자의 최신 루틴을 조회합니다.',
-  })
-  @ApiResponse({
-    status: 200,
-    type: RoutineResponseDto,
-  })
-  async getLatestRoutine(
-    @Request() req: Express.Request,
-  ): Promise<RoutineResponseDto> {
-    const userId = req.user?.sub;
-    if (!userId) {
-      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
-    }
-    return this.routineService.getLatestRoutine(userId);
   }
 }

@@ -1,33 +1,90 @@
 'use client';
 
-import { ShieldCheck, ChevronRight, Sparkles, Zap, Brain } from 'lucide-react';
+import {
+  ChevronRight,
+  Sparkles,
+  Zap,
+  Brain,
+  Dumbbell,
+  Flame,
+  Layers,
+  Sprout,
+  Trophy,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import * as api from '@/lib/api';
 import { toErrorMessage } from '@/shared/enums/utils/error';
 import { toast } from 'sonner';
+import {
+  CreateRoutineDto,
+  PresetRoutineListItemDto,
+} from '@/generated/openapi-client';
+import { PresetRoutineType } from '@/shared/enums/routine.enum';
 
-export default function ProgramSelectionUI() {
+const RoutineIconMap = [
+  {
+    icon: <Sprout className="w-7 h-7" />,
+    color: 'text-emerald-500',
+    bgColor: 'bg-emerald-50',
+  },
+  {
+    icon: <Layers className="w-7 h-7" />,
+    color: 'text-indigo-500',
+    bgColor: 'bg-indigo-50',
+  },
+  {
+    icon: <Trophy className="w-7 h-7" />,
+    color: 'text-purple-500',
+    bgColor: 'bg-purple-50',
+    badge: 'HARD',
+  },
+  {
+    icon: <Dumbbell className="w-7 h-7" />,
+    color: 'text-slate-600',
+    bgColor: 'bg-slate-100',
+  },
+  {
+    icon: <Flame className="w-7 h-7" />,
+    color: 'text-orange-500',
+    bgColor: 'bg-orange-50',
+  },
+  {
+    icon: <Sparkles className="w-7 h-7" />,
+    color: 'text-amber-500',
+    bgColor: 'bg-amber-50',
+    badge: 'HARD',
+  },
+];
+
+export default function ProgramSelectionUI({
+  presetRoutines,
+}: {
+  presetRoutines: PresetRoutineListItemDto[];
+}) {
   const router = useRouter();
 
   const [loading, setLoading] = useState(false);
 
-  // const createRecommendedRoutineMutation = useMutation({
-  //   mutationFn: async () => {
-  //     const { data, error } = await api.createRecommendedRoutine();
-  //     if (error) throw error;
-  //     return data;
-  //   },
-  //   onError: error => {
-  //     toast.error(toErrorMessage(error));
-  //   },
-  // });
+  const createRecommendedRoutineMutation = useMutation({
+    mutationFn: async (presetRoutineType: PresetRoutineType) => {
+      const { data, error } =
+        await api.createRecommendedRoutine(presetRoutineType);
+      if (error) throw error;
+      return data;
+    },
+    onError: error => {
+      toast.error(toErrorMessage(error));
+    },
+  });
 
-  const handleSelect = async (program: string) => {
+  const handleSelect = async (routine: PresetRoutineListItemDto) => {
     setLoading(true);
-    // const data = await createRecommendedRoutineMutation.mutateAsync();
-    // if (data) router.push('/recommendation');
+    const data = await createRecommendedRoutineMutation.mutateAsync(
+      routine.type,
+    );
+    if (data) router.push('/recommendation');
     setLoading(false);
   };
 
@@ -61,55 +118,49 @@ export default function ProgramSelectionUI() {
           어떤 프로그램을 원하시나요?
         </h2>
         <p className="text-slate-500 text-sm">
-          입력된 데이터를 바탕으로 두 가지 경로를 준비했습니다.
+          분석된 데이터를 바탕으로 최적의 옵션을 제안합니다.
         </p>
       </div>
+      <div className="grid grid-cols-1 gap-3.5">
+        {presetRoutines.map((routine, idx) => {
+          const { icon, bgColor, color, badge } =
+            RoutineIconMap[idx % RoutineIconMap.length];
+          return (
+            <button
+              key={routine.type}
+              onClick={() => handleSelect(routine)}
+              className="group relative overflow-hidden bg-white p-5 rounded-[2rem] border border-slate-100 hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100 transition-all text-left flex items-center gap-4"
+            >
+              <div
+                className={`w-14 h-14 ${bgColor} rounded-2xl flex items-center justify-center ${color} group-hover:scale-110 transition-transform duration-300`}
+              >
+                {icon}
+              </div>
 
-      <div className="space-y-4">
-        <button
-          onClick={() => handleSelect('NORMAL')}
-          className="w-full group relative overflow-hidden bg-white p-6 rounded-[2.5rem] border-2 border-slate-100 hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-50 transition-all text-left flex items-center gap-5"
-        >
-          <div className="w-16 h-16 bg-indigo-50 rounded-3xl flex items-center justify-center group-hover:bg-indigo-600 transition-colors">
-            <ShieldCheck className="w-8 h-8 text-indigo-600 group-hover:text-white transition-colors" />
-          </div>
-          <div className="flex-1">
-            <h3 className="text-lg font-black text-slate-800 group-hover:text-indigo-600 transition-colors">
-              1. 추천 루틴 받기
-            </h3>
-            <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
-              현재 수준에서 가장 안전하고
-              <br />
-              효율적인 표준 성장을 지향합니다.
-            </p>
-          </div>
-          <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-indigo-600 group-hover:translate-x-1 transition-all" />
-        </button>
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-black text-slate-800">
+                    {routine.title}
+                  </h3>
+                  {badge && (
+                    <span
+                      className={`text-[9px] font-black px-1.5 py-0.5 rounded-md uppercase tracking-tighter bg-amber-100 text-amber-600`}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-0.5 font-medium leading-relaxed">
+                  {routine.description}
+                </p>
+              </div>
 
-        <button
-          onClick={() => handleSelect('GIANT')}
-          className="w-full group relative overflow-hidden bg-white p-6 rounded-[2.5rem] border-2 border-slate-100 hover:border-amber-500 hover:shadow-xl hover:shadow-amber-50 transition-all text-left flex items-center gap-5"
-        >
-          <div className="w-16 h-16 bg-amber-50 rounded-3xl flex items-center justify-center group-hover:bg-amber-500 transition-colors">
-            <Sparkles className="w-8 h-8 text-amber-500 group-hover:text-white transition-colors" />
-          </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-lg font-black text-slate-800 group-hover:text-amber-600 transition-colors">
-                2. 거인화 프로젝트
-              </h3>
-              <span className="bg-amber-100 text-amber-600 text-[10px] px-2 py-0.5 rounded-lg font-black uppercase tracking-tighter">
-                Hard
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 mt-1 font-medium leading-relaxed">
-              근비대와 파워를 극한까지 끌어올리는
-              <br />
-              고강도 볼륨 중심의 벌크업 프로그램입니다.
-            </p>
-          </div>
-          <ChevronRight className="w-5 h-5 text-slate-300 group-hover:text-amber-600 group-hover:translate-x-1 transition-all" />
-        </button>
+              <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all">
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </div>
+            </button>
+          );
+        })}
       </div>
 
       <div className="px-6 py-5 bg-slate-50 rounded-3xl border border-slate-100">

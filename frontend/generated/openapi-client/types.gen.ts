@@ -273,7 +273,7 @@ export type CreateRoutineSubExerciseDto = {
     /**
      * 운동 부위
      */
-    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS' | 'CORE' | 'FULL_BODY';
     /**
      * 선택 가능한 운동 목록
      */
@@ -296,7 +296,7 @@ export type CreateRoutineDayDto = {
     /**
      * 운동 부위
      */
-    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS' | 'CORE' | 'FULL_BODY';
     /**
      * 운동 목록
      */
@@ -321,6 +321,10 @@ export type CreateRoutineDto = {
      */
     weeklyFrequency: number;
     /**
+     * 루틴 한줄 설명
+     */
+    description?: string;
+    /**
      * 루틴 일차 목록
      */
     days: Array<CreateRoutineDayDto>;
@@ -342,33 +346,27 @@ export type RoutineSubExerciseResponseDto = {
     /**
      * 세트 수
      */
-    sets?: {
-        [key: string]: unknown;
-    };
+    sets?: number;
     /**
      * 반복 수
      */
-    reps?: {
-        [key: string]: unknown;
-    };
+    reps?: number;
     /**
      * 1RM 퍼센트
      */
-    oneRmPct?: {
-        [key: string]: unknown;
-    };
+    oneRmPct?: number;
     /**
      * 운동 이름
      */
-    exerciseName?: {
-        [key: string]: unknown;
-    };
+    exerciseName?: string;
+    /**
+     * 운동 부위
+     */
+    bodyPart?: string;
     /**
      * 선택 가능한 운동 목록
      */
-    chooseOneExercises?: {
-        [key: string]: unknown;
-    };
+    chooseOneExercises?: string;
     /**
      * 생성일시
      */
@@ -399,7 +397,7 @@ export type RoutineDayResponseDto = {
     /**
      * 운동 부위
      */
-    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS';
+    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS' | 'CORE' | 'FULL_BODY';
     /**
      * 운동 목록
      */
@@ -474,6 +472,33 @@ export type UpdateRoutineDto = {
      * 루틴 일차 목록
      */
     days?: Array<CreateRoutineDayDto>;
+};
+
+export type PresetRoutineListItemDto = {
+    /**
+     * 프리셋 루틴 타입
+     */
+    type: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'STRENGTH' | 'FAT_LOSS' | 'GIANT';
+    /**
+     * 루틴 제목
+     */
+    title: string;
+    /**
+     * 목표 타입
+     */
+    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
+    /**
+     * 경험 레벨
+     */
+    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    /**
+     * 주당 운동 횟수
+     */
+    weeklyFrequency: number;
+    /**
+     * 루틴 한줄 설명
+     */
+    description: string;
 };
 
 export type InbodyControllerFindAllData = {
@@ -884,6 +909,19 @@ export type RoutineControllerCreateResponses = {
 
 export type RoutineControllerCreateResponse = RoutineControllerCreateResponses[keyof RoutineControllerCreateResponses];
 
+export type RoutineControllerGetLatestRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/routines/latest';
+};
+
+export type RoutineControllerGetLatestRoutineResponses = {
+    200: RoutineResponseDto;
+};
+
+export type RoutineControllerGetLatestRoutineResponse = RoutineControllerGetLatestRoutineResponses[keyof RoutineControllerGetLatestRoutineResponses];
+
 export type RoutineControllerRemoveData = {
     body?: never;
     path: {
@@ -963,35 +1001,144 @@ export type RoutineControllerUpdateResponses = {
 
 export type RoutineControllerUpdateResponse = RoutineControllerUpdateResponses[keyof RoutineControllerUpdateResponses];
 
-export type RoutineControllerGenerateRoutineData = {
+export type PresetRoutineControllerGetAllPresetRoutinesData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/routines/generate';
+    url: '/preset-routines';
 };
 
-export type RoutineControllerGenerateRoutineErrors = {
+export type PresetRoutineControllerGetAllPresetRoutinesErrors = {
     /**
      * 로그인 후 이용해주세요.
      */
     401: unknown;
 };
 
-export type RoutineControllerGenerateRoutineResponses = {
-    201: RoutineResponseDto;
+export type PresetRoutineControllerGetAllPresetRoutinesResponses = {
+    200: Array<PresetRoutineListItemDto>;
 };
 
-export type RoutineControllerGenerateRoutineResponse = RoutineControllerGenerateRoutineResponses[keyof RoutineControllerGenerateRoutineResponses];
+export type PresetRoutineControllerGetAllPresetRoutinesResponse = PresetRoutineControllerGetAllPresetRoutinesResponses[keyof PresetRoutineControllerGetAllPresetRoutinesResponses];
 
-export type RoutineControllerGetLatestRoutineData = {
+export type PresetRoutineControllerGetBeginnerRoutineData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/routines/latest';
+    url: '/preset-routines/beginner';
 };
 
-export type RoutineControllerGetLatestRoutineResponses = {
+export type PresetRoutineControllerGetBeginnerRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerGetBeginnerRoutineResponses = {
+    200: CreateRoutineDto;
+};
+
+export type PresetRoutineControllerGetBeginnerRoutineResponse = PresetRoutineControllerGetBeginnerRoutineResponses[keyof PresetRoutineControllerGetBeginnerRoutineResponses];
+
+export type PresetRoutineControllerGetIntermediateRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/preset-routines/intermediate';
+};
+
+export type PresetRoutineControllerGetIntermediateRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerGetIntermediateRoutineResponses = {
+    200: CreateRoutineDto;
+};
+
+export type PresetRoutineControllerGetIntermediateRoutineResponse = PresetRoutineControllerGetIntermediateRoutineResponses[keyof PresetRoutineControllerGetIntermediateRoutineResponses];
+
+export type PresetRoutineControllerGetAdvancedRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/preset-routines/advanced';
+};
+
+export type PresetRoutineControllerGetAdvancedRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerGetAdvancedRoutineResponses = {
+    200: CreateRoutineDto;
+};
+
+export type PresetRoutineControllerGetAdvancedRoutineResponse = PresetRoutineControllerGetAdvancedRoutineResponses[keyof PresetRoutineControllerGetAdvancedRoutineResponses];
+
+export type PresetRoutineControllerGetStrengthRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/preset-routines/strength';
+};
+
+export type PresetRoutineControllerGetStrengthRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerGetStrengthRoutineResponses = {
+    200: CreateRoutineDto;
+};
+
+export type PresetRoutineControllerGetStrengthRoutineResponse = PresetRoutineControllerGetStrengthRoutineResponses[keyof PresetRoutineControllerGetStrengthRoutineResponses];
+
+export type PresetRoutineControllerGetFatLossRoutineData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/preset-routines/fat-loss';
+};
+
+export type PresetRoutineControllerGetFatLossRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerGetFatLossRoutineResponses = {
+    200: CreateRoutineDto;
+};
+
+export type PresetRoutineControllerGetFatLossRoutineResponse = PresetRoutineControllerGetFatLossRoutineResponses[keyof PresetRoutineControllerGetFatLossRoutineResponses];
+
+export type PresetRoutineControllerCreateRecommendedRoutineData = {
+    body?: never;
+    path: {
+        presetRoutineType: string;
+    };
+    query?: never;
+    url: '/preset-routines/{presetRoutineType}';
+};
+
+export type PresetRoutineControllerCreateRecommendedRoutineErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type PresetRoutineControllerCreateRecommendedRoutineResponses = {
     200: RoutineResponseDto;
 };
 
-export type RoutineControllerGetLatestRoutineResponse = RoutineControllerGetLatestRoutineResponses[keyof RoutineControllerGetLatestRoutineResponses];
+export type PresetRoutineControllerCreateRecommendedRoutineResponse = PresetRoutineControllerCreateRecommendedRoutineResponses[keyof PresetRoutineControllerCreateRecommendedRoutineResponses];

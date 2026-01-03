@@ -8,6 +8,7 @@ import { OneRmModule } from './one-rm/one-rm.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { HealthModule } from './health/health.module';
 import { RoutineModule } from './routine/routine.module';
+import { PresetRoutineModule } from './preset-routine/preset-routine.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RoutineModule } from './routine/routine.module';
     DashboardModule,
     HealthModule,
     RoutineModule,
+    PresetRoutineModule,
   ],
   controllers: [],
   providers: [],

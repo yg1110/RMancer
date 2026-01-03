@@ -1,7 +1,8 @@
-import { CreateRoutineDto } from '../dto/create-routine.dto';
+import { CreateRoutineDto } from '../../routine/dto/create-routine.dto';
 
 export const GIANT_ROUTINE = {
-  title: '거인의 비밀',
+  title: '벌크업 루틴',
+  description: '최대 근비대를 위한 고빈도 고용량 벌크업 루틴',
   goalType: 'MUSCLE_GAIN',
   experienceLevel: 'ADVANCED',
   weeklyFrequency: 6,

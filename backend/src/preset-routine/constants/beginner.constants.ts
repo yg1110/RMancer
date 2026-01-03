@@ -1,0 +1,120 @@
+import { CreateRoutineDto } from '../../routine/dto/create-routine.dto';
+
+export const BEGINNER_ROUTINE: CreateRoutineDto = {
+  title: '초보자용 전신 루틴',
+  description: '운동 초보자를 위한 전신 운동 기초 루틴',
+  goalType: 'MUSCLE_GAIN',
+  experienceLevel: 'BEGINNER',
+  weeklyFrequency: 3,
+  days: [
+    {
+      dayIndex: 0,
+      name: '전신 운동 A',
+      bodyPart: 'CHEST',
+      subExercises: [
+        {
+          order: 0,
+          sets: 3,
+          reps: 10,
+          oneRmPct: 0.65,
+          exerciseName: '벤치프레스',
+          bodyPart: 'CHEST',
+        },
+        {
+          order: 1,
+          sets: 3,
+          reps: 10,
+          oneRmPct: 0.1,
+          exerciseName: '바벨로우',
+          bodyPart: 'BACK',
+        },
+        {
+          order: 2,
+          sets: 3,
+          reps: 12,
+          exerciseName: '스쿼트',
+          bodyPart: 'LEGS',
+        },
+        {
+          order: 3,
+          sets: 2,
+          reps: 10,
+          exerciseName: '오버헤드 프레스',
+          bodyPart: 'SHOULDERS',
+        },
+      ],
+    },
+    {
+      dayIndex: 1,
+      name: '전신 운동 B',
+      bodyPart: 'BACK',
+      subExercises: [
+        {
+          order: 0,
+          sets: 3,
+          reps: 10,
+          oneRmPct: 0.65,
+          exerciseName: '데드리프트',
+          bodyPart: 'LEGS',
+        },
+        {
+          order: 1,
+          sets: 3,
+          reps: 10,
+          exerciseName: '덤벨 프레스',
+          bodyPart: 'CHEST',
+        },
+        {
+          order: 2,
+          sets: 3,
+          reps: 12,
+          exerciseName: '랫풀다운',
+          bodyPart: 'BACK',
+        },
+        {
+          order: 3,
+          sets: 2,
+          reps: 10,
+          exerciseName: '레터럴 레이즈',
+          bodyPart: 'SHOULDERS',
+        },
+      ],
+    },
+    {
+      dayIndex: 2,
+      name: '전신 운동 C',
+      bodyPart: 'LEGS',
+      subExercises: [
+        {
+          order: 0,
+          sets: 3,
+          reps: 10,
+          oneRmPct: 0.65,
+          exerciseName: '스쿼트',
+          bodyPart: 'LEGS',
+        },
+        {
+          order: 1,
+          sets: 3,
+          reps: 10,
+          exerciseName: '인클라인 벤치',
+          bodyPart: 'CHEST',
+        },
+        {
+          order: 2,
+          sets: 3,
+          reps: 12,
+          exerciseName: '시티드 로우',
+          bodyPart: 'BACK',
+        },
+        {
+          order: 3,
+          sets: 2,
+          reps: 10,
+          bodyPart: 'ARMS',
+          chooseOneExercises: '바벨컬, 덤벨컬 택 1개',
+        },
+      ],
+    },
+  ],
+};

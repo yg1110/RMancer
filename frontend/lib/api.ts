@@ -6,14 +6,19 @@ import {
   goalProfileControllerUpdate,
   inbodyControllerCreate,
   oneRmControllerCreate,
+  presetRoutineControllerCreateRecommendedRoutine,
+  presetRoutineControllerGetAllPresetRoutines,
+  routineControllerCreate,
   routineControllerGetLatestRoutine,
 } from '@/generated/openapi-client';
 import {
   CreateGoalProfileDto,
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
+  CreateRoutineDto,
   UpdateGoalProfileDto,
 } from '@/generated/openapi-client/types.gen';
+import { PresetRoutineType } from '@/shared/enums/routine.enum';
 
 export const createGoalProfile = async (body: CreateGoalProfileDto) => {
   const { data, error } = await goalProfileControllerCreate({ body });
@@ -39,7 +44,15 @@ export const getLatestRoutine = async () => {
   const { data, error } = await routineControllerGetLatestRoutine();
   return { data, error };
 };
-// export const createRecommendedRoutine = async () => {
-//   const { data, error } = await routineControllerCreateRecommended();
-//   return { data, error };
-// };
+export const getPresetRoutines = async () => {
+  const { data, error } = await presetRoutineControllerGetAllPresetRoutines();
+  return { data, error };
+};
+export const createRecommendedRoutine = async (
+  presetRoutineType: PresetRoutineType,
+) => {
+  const { data, error } = await presetRoutineControllerCreateRecommendedRoutine(
+    { path: { presetRoutineType } },
+  );
+  return { data, error };
+};

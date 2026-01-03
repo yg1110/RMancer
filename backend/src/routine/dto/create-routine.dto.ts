@@ -6,6 +6,7 @@ import {
   ValidateNested,
   Min,
   Max,
+  IsOptional,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
@@ -46,6 +47,15 @@ export class CreateRoutineDto {
   @Min(3)
   @Max(6)
   weeklyFrequency: number;
+
+  @ApiProperty({
+    description: '루틴 한줄 설명',
+    example: '운동 초보자를 위한 전신 운동 기초 루틴',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  description?: string;
 
   @ApiProperty({
     description: '루틴 일차 목록',

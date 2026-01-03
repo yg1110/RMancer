@@ -145,6 +145,8 @@ enum BodyPart {
   LEGS
   SHOULDERS
   ARMS
+  CORE
+  FULL_BODY
 }
 
 enum LoadMethod {

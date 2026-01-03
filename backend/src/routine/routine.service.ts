@@ -8,7 +8,6 @@ import { CreateRoutineDto } from './dto/create-routine.dto';
 import { UpdateRoutineDto } from './dto/update-routine.dto';
 import { RoutineResponseDto } from './dto/routine-response.dto';
 import { ROUTINE_ERROR_MESSAGE } from './routine.constants';
-import { GIANT_ROUTINE } from './constants/giant.constants';
 
 @Injectable()
 export class RoutineService {
@@ -86,6 +85,27 @@ export class RoutineService {
     });
 
     return routines;
+  }
+
+  async getLatestRoutine(userId: string): Promise<RoutineResponseDto> {
+    const routine = await this.prisma.routine.findFirst({
+      where: { userId },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        days: {
+          include: {
+            subExercises: true,
+          },
+          orderBy: {
+            dayIndex: 'asc',
+          },
+        },
+      },
+    });
+    if (!routine) {
+      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_NOT_FOUND);
+    }
+    return routine;
   }
 
   async findOne(id: string, userId: string): Promise<RoutineResponseDto> {
@@ -199,29 +219,5 @@ export class RoutineService {
         id,
       },
     });
-  }
-
-  async generateRoutine(userId: string): Promise<RoutineResponseDto> {
-    const routine = await this.create(userId, GIANT_ROUTINE);
-    return routine;
-  }
-
-  async getLatestRoutine(userId: string): Promise<RoutineResponseDto> {
-    const routine = await this.prisma.routine.findFirst({
-      where: {
-        userId,
-      },
-      include: {
-        days: {
-          include: {
-            subExercises: true,
-          },
-        },
-      },
-    });
-    if (!routine) {
-      throw new NotFoundException(ROUTINE_ERROR_MESSAGE.ROUTINE_NOT_FOUND);
-    }
-    return routine;
   }
 }
