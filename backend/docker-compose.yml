@@ -1,9 +1,22 @@
 version: '3.9'
 
 services:
+  api:
+    container_name: rmancer-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    depends_on:
+      - postgres
+    restart: always
+
   postgres:
     image: postgres:16
-    container_name: rmancer
+    container_name: rmancer-postgres
     ports:
       - '5432:5432'
     environment:
@@ -12,6 +25,7 @@ services:
       POSTGRES_DB: rmancer
     volumes:
       - rmancer_pgdata:/var/lib/postgresql/data
+    restart: always
 
 volumes:
   rmancer_pgdata:
