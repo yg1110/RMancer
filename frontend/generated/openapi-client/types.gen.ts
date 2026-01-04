@@ -200,6 +200,21 @@ export type OneRmRecordResponseDto = {
     createdAt: string;
 };
 
+export type CalculateOneRmDto = {
+    /**
+     * 운동 종류
+     */
+    lift: 'BENCH_PRESS' | 'BACK_SQUAT' | 'DEADLIFT' | 'OVERHEAD_PRESS';
+    /**
+     * 들어올린 무게(kg)
+     */
+    weightKg: number;
+    /**
+     * 반복 횟수
+     */
+    reps: number;
+};
+
 export type UpdateOneRmRecordDto = {
     /**
      * 운동 종류
@@ -750,6 +765,29 @@ export type OneRmControllerCreateResponses = {
 };
 
 export type OneRmControllerCreateResponse = OneRmControllerCreateResponses[keyof OneRmControllerCreateResponses];
+
+export type OneRmControllerCalculateAndUpdateData = {
+    body: CalculateOneRmDto;
+    path?: never;
+    query?: never;
+    url: '/one-rm/calculate';
+};
+
+export type OneRmControllerCalculateAndUpdateErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+};
+
+export type OneRmControllerCalculateAndUpdateResponses = {
+    /**
+     * 증가된 1RM 값(최초 기록이면 전체, 갱신 없으면 0)
+     */
+    200: number;
+};
+
+export type OneRmControllerCalculateAndUpdateResponse = OneRmControllerCalculateAndUpdateResponses[keyof OneRmControllerCalculateAndUpdateResponses];
 
 export type OneRmControllerRemoveData = {
     body?: never;

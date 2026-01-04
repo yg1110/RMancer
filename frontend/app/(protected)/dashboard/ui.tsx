@@ -19,9 +19,7 @@ import {
   CreateGoalProfileDto,
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
-  DashboardResponseDto,
   UpdateGoalProfileDto,
-  UpdateInbodyRecordDto,
 } from '@/generated/openapi-client';
 import { toast } from 'sonner';
 import Progress from './components/progress';

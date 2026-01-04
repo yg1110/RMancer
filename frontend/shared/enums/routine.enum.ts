@@ -46,3 +46,20 @@ export const BodyPartLabel: Record<
   CORE: '코어',
   FULL_BODY: '전신',
 };
+
+export const OneRmLiftCode = {
+  BENCH_PRESS: 'BENCH_PRESS',
+  BACK_SQUAT: 'BACK_SQUAT',
+  DEADLIFT: 'DEADLIFT',
+  OVERHEAD_PRESS: 'OVERHEAD_PRESS',
+} as const;
+
+export const OneRmLiftName: Record<
+  (typeof OneRmLiftCode)[keyof typeof OneRmLiftCode],
+  string
+> = {
+  BENCH_PRESS: '벤치프레스',
+  BACK_SQUAT: '스쿼트',
+  DEADLIFT: '데드리프트',
+  OVERHEAD_PRESS: '오버헤드 프레스',
+};

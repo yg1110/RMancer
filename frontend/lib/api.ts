@@ -5,6 +5,7 @@ import {
   goalProfileControllerCreate,
   goalProfileControllerUpdate,
   inbodyControllerCreate,
+  oneRmControllerCalculateAndUpdate,
   oneRmControllerCreate,
   presetRoutineControllerCreateRecommendedRoutine,
   presetRoutineControllerGetAllPresetRoutines,
@@ -12,6 +13,7 @@ import {
   routineControllerGetLatestRoutine,
 } from '@/generated/openapi-client';
 import {
+  CalculateOneRmDto,
   CreateGoalProfileDto,
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
@@ -54,5 +56,11 @@ export const createRecommendedRoutine = async (
   const { data, error } = await presetRoutineControllerCreateRecommendedRoutine(
     { path: { presetRoutineType } },
   );
+  return { data, error };
+};
+export const calculateAndUpdateOneRmRecord = async (
+  body: CalculateOneRmDto,
+) => {
+  const { data, error } = await oneRmControllerCalculateAndUpdate({ body });
   return { data, error };
 };

@@ -10,6 +10,7 @@ import { OneRmRecordResponseDto } from './dto/one-rm-record-response.dto';
 import { ONE_RM_ERROR_MESSAGE } from './one-rm.constants';
 import { OneRmLift } from '@prisma/client';
 import { OneRmAllResponseDto } from './dto/one-rm-all-response.dto';
+import { CalculateOneRmDto } from './dto/calculate-one-rm.dto';
 
 @Injectable()
 export class OneRmService {
@@ -152,5 +153,82 @@ export class OneRmService {
     }
 
     return latestRecords;
+  }
+
+  /**
+   * 1RM 계산 (Epley 공식 사용)
+   * 1RM = weight × (1 + reps / 30)
+   */
+  private calculateOneRm(weightKg: number, reps: number): number {
+    if (reps === 1) {
+      return weightKg;
+    }
+    return weightKg * (1 + reps / 30);
+  }
+
+  /**
+   * 무게와 반복 횟수로 1RM을 계산하여 해당 운동의 최신 1RM 기록을 업데이트합니다.
+   * 만약 calculatedOneRm가 최신기록보다 낮다면 추가하지 않습니다.
+   * 오른 무게(증가분)만큼 리턴합니다. (증가분이 없으면 0)
+   */
+  async calculateAndUpdateOneRm(
+    userId: string,
+    calculateDto: CalculateOneRmDto,
+  ): Promise<number> {
+    const calculatedOneRm = this.calculateOneRm(
+      calculateDto.weightKg,
+      calculateDto.reps,
+    );
+
+    // 최신 기록 조회 (해당 lift)
+    const latestRecord = await this.prisma.oneRmRecord.findFirst({
+      where: {
+        userId,
+        lift: calculateDto.lift,
+      },
+      orderBy: {
+        measuredAt: 'desc',
+      },
+    });
+
+    // 최신 기록이 있으면 증가분 계산, 없으면 전체 리턴
+    if (latestRecord) {
+      if (+latestRecord.oneRmKg >= +calculatedOneRm) {
+        return 0;
+      }
+      const increased = +calculatedOneRm - +latestRecord.oneRmKg;
+      try {
+        await this.prisma.oneRmRecord.create({
+          data: {
+            userId,
+            lift: calculateDto.lift,
+            oneRmKg: calculatedOneRm,
+            measuredAt: new Date(),
+          },
+        });
+        return increased;
+      } catch (error) {
+        throw new InternalServerErrorException(
+          ONE_RM_ERROR_MESSAGE.ONE_RM_RECORD_CREATE_FAILED,
+        );
+      }
+    } else {
+      // 최초 기록인 경우 전체 무게를 증가분으로 리턴
+      try {
+        await this.prisma.oneRmRecord.create({
+          data: {
+            userId,
+            lift: calculateDto.lift,
+            oneRmKg: calculatedOneRm,
+            measuredAt: new Date(),
+          },
+        });
+        return +calculatedOneRm;
+      } catch (error) {
+        throw new InternalServerErrorException(
+          ONE_RM_ERROR_MESSAGE.ONE_RM_RECORD_CREATE_FAILED,
+        );
+      }
+    }
   }
 }

@@ -9,8 +9,8 @@ interface LayoutProps {
 
 const TitleMap = {
   '/dashboard': 'RMancer',
-  '/selection': '루틴 설정',
-  '/recommendation': 'AI 맞춤 플랜',
+  '/selection': '프로그램 선택',
+  '/recommendation': '추천 프로그램',
 } as const;
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {

@@ -9,14 +9,12 @@ import {
   UseGuards,
   Request,
   UnauthorizedException,
-  Query,
 } from '@nestjs/common';
 import {
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
   ApiTags,
-  ApiQuery,
 } from '@nestjs/swagger';
 import { OneRmService } from './one-rm.service';
 import { CreateOneRmRecordDto } from './dto/create-one-rm-record.dto';
@@ -26,6 +24,7 @@ import { AccessTokenGuard } from '../auth/guards/access-token.guard';
 import { ERROR_MESSAGE } from 'src/common/error.constants';
 import { ONE_RM_ERROR_MESSAGE } from './one-rm.constants';
 import { OneRmAllResponseDto } from './dto/one-rm-all-response.dto';
+import { CalculateOneRmDto } from './dto/calculate-one-rm.dto';
 
 @ApiTags('1RM 기록')
 @Controller('one-rm')
@@ -55,6 +54,35 @@ export class OneRmController {
       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
     }
     return this.oneRmService.create(userId, createDto);
+  }
+
+  @Post('calculate')
+  @ApiOperation({
+    summary: '1RM 계산 및 업데이트',
+    description:
+      '무게와 반복 횟수를 입력받아 1RM을 계산하고, 해당 운동 종류의 최신 1RM 기록을 업데이트합니다. 기록이 없으면 새로 생성합니다.',
+  })
+  @ApiResponse({
+    status: 200,
+    schema: {
+      example: 2.5,
+      type: 'number',
+      description: '증가된 1RM 값(최초 기록이면 전체, 갱신 없으면 0)',
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: ERROR_MESSAGE.UNAUTHORIZED,
+  })
+  async calculateAndUpdate(
+    @Request() req: Express.Request,
+    @Body() calculateDto: CalculateOneRmDto,
+  ): Promise<number> {
+    const userId = req.user?.sub;
+    if (!userId) {
+      throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_FOUND);
+    }
+    return this.oneRmService.calculateAndUpdateOneRm(userId, calculateDto);
   }
 
   @Get()
