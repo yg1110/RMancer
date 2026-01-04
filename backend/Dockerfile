@@ -27,6 +27,7 @@
   # 🔑 builder에서 검증된 node_modules 그대로 복사
   COPY --from=builder /app/node_modules ./node_modules
   COPY --from=builder /app/dist ./dist
+  COPY --from=builder /app/prisma ./prisma  
   COPY package.json ./
   
   EXPOSE 8000
