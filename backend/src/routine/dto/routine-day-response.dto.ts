@@ -27,13 +27,6 @@ export class RoutineDayResponseDto {
   })
   name: string;
 
-  @ApiPropertyOptional({
-    description: '운동 부위',
-    enum: BodyPart,
-    example: 'CHEST',
-  })
-  bodyPart?: BodyPart | null;
-
   @ApiProperty({
     description: '운동 목록',
     type: [RoutineSubExerciseResponseDto],
@@ -52,4 +45,3 @@ export class RoutineDayResponseDto {
   })
   updatedAt: Date;
 }
-

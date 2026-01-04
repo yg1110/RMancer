@@ -19,6 +19,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const onBack = () => {
     router.push('/dashboard');
   };
+  const onTitleClick = () => {
+    router.push('/');
+  };
+
   const hasBackButton = pathname === '/selection';
   const title =
     (pathname && TitleMap[pathname as keyof typeof TitleMap]) || 'RMancer';
@@ -35,7 +39,12 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <ArrowLeft className="w-5 h-5 text-slate-600" />
               </button>
             )}
-            <h1 className="text-xl font-bold text-slate-800">{title}</h1>
+            <h1
+              className="text-xl font-bold text-slate-800"
+              onClick={onTitleClick}
+            >
+              {title}
+            </h1>
           </div>
           <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center">
             <Dumbbell className="w-5 h-5 text-indigo-600" />

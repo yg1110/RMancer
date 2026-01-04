@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateGoalProfileDto } from './dto/create-goal-profile.dto';
 import { UpdateGoalProfileDto } from './dto/update-goal-profile.dto';
@@ -19,22 +14,29 @@ export class GoalProfileService {
     createDto: CreateGoalProfileDto,
   ): Promise<GoalProfileResponseDto> {
     const existingGoalProfile = await this.findOne(userId);
-    if (existingGoalProfile) {
-      throw new BadRequestException(
-        GOAL_PROFILE_ERROR_MESSAGE.GOAL_PROFILE_ALREADY_EXISTS,
-      );
-    }
-    try {
-      const goalProfile = await this.prisma.goalProfile.create({
-        data: {
-          userId,
-          goalType: createDto.goalType,
-          experienceLevel: createDto.experienceLevel,
-          weeklyFrequency: createDto.weeklyFrequency,
-        },
-      });
 
-      return goalProfile;
+    try {
+      if (existingGoalProfile) {
+        const updatedGoalProfile = await this.prisma.goalProfile.update({
+          where: { userId },
+          data: {
+            goalType: createDto.goalType,
+            experienceLevel: createDto.experienceLevel,
+            weeklyFrequency: createDto.weeklyFrequency,
+          },
+        });
+        return updatedGoalProfile;
+      } else {
+        const goalProfile = await this.prisma.goalProfile.create({
+          data: {
+            userId,
+            goalType: createDto.goalType,
+            experienceLevel: createDto.experienceLevel,
+            weeklyFrequency: createDto.weeklyFrequency,
+          },
+        });
+        return goalProfile;
+      }
     } catch (error) {
       throw new InternalServerErrorException(
         GOAL_PROFILE_ERROR_MESSAGE.GOAL_PROFILE_CREATE_FAILED,

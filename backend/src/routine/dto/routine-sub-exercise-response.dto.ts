@@ -74,6 +74,15 @@ export class RoutineSubExerciseResponseDto {
   @IsString()
   chooseOneExercises?: string | null;
 
+  @ApiPropertyOptional({
+    description: '운동 메모',
+    type: String,
+    example: '(5T2P)',
+  })
+  @IsOptional()
+  @IsString()
+  memo?: string | null;
+
   @ApiProperty({
     description: '생성일시',
     example: '2025-12-28T00:00:00.000Z',

@@ -5,7 +5,10 @@ import {
   RoutineSubExerciseResponseDto,
 } from '@/generated/openapi-client';
 import { BodyPartLabel, BodyPartType } from '@/shared/enums/routine.enum';
-import { getOneRmByBodyPart } from '@/shared/utils/muscle-label';
+import {
+  getOneRmByBodyPart,
+  toFixedWeightFormat,
+} from '@/shared/utils/muscle-label';
 import { Check } from 'lucide-react';
 
 type ExerciseCardProps = {
@@ -62,7 +65,8 @@ export function ExerciseCard({
                   isAllDone ? 'text-emerald-700' : 'text-slate-800'
                 }`}
               >
-                {exercise.exerciseName || exercise.chooseOneExercises}
+                {exercise.exerciseName || exercise.chooseOneExercises}{' '}
+                {exercise.memo}
               </h5>
             </div>
             {!exercise.chooseOneExercises && (
@@ -100,24 +104,37 @@ export function ExerciseCard({
         }`}
       >
         <div className="flex justify-between items-end">
-          {dashboardData?.latestOneRm && (
+          {dashboardData?.latestOneRm && !exercise.chooseOneExercises && (
             <div>
-              {!exercise.chooseOneExercises && (
-                <>
-                  <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">
-                    Target
-                  </p>
-                  <div className="flex items-baseline gap-1">
-                    <span className="text-xl font-black text-slate-900">
-                      {getOneRmByBodyPart(
-                        exercise.bodyPart as BodyPartType,
-                        dashboardData.latestOneRm,
-                      )}
-                    </span>
-                    <span className="text-xs font-bold text-slate-400">kg</span>
-                  </div>
-                </>
-              )}
+              <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">
+                Target
+              </p>
+              <div className="flex items-baseline gap-1">
+                <span className="text-xl font-black text-slate-900">
+                  {toFixedWeightFormat(
+                    getOneRmByBodyPart(
+                      exercise.bodyPart as BodyPartType,
+                      dashboardData.latestOneRm,
+                    ),
+                    exercise.oneRmPct || 0,
+                  )}
+                </span>
+                <span className="text-xs font-bold text-slate-400">kg</span>
+              </div>
+            </div>
+          )}
+
+          {exercise.sets && (
+            <div>
+              <p className="text-[9px] font-bold text-slate-400 uppercase">
+                Sets
+              </p>
+              <div className="flex items-baseline gap-1 justify-center">
+                <span className="text-xl font-black text-slate-900">
+                  {exercise.sets || 0}
+                </span>
+                <span className="text-xs font-bold text-slate-400">sets</span>
+              </div>
             </div>
           )}
           <div className="text-right">

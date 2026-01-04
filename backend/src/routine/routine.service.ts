@@ -29,7 +29,6 @@ export class RoutineService {
             create: createDto.days.map(day => ({
               dayIndex: day.dayIndex,
               name: day.name,
-              bodyPart: day.bodyPart,
               subExercises: {
                 create: day.subExercises.map(exercise => ({
                   order: exercise.order,
@@ -38,6 +37,7 @@ export class RoutineService {
                   oneRmPct: exercise.oneRmPct,
                   exerciseName: exercise.exerciseName,
                   bodyPart: exercise.bodyPart,
+                  memo: exercise.memo,
                   chooseOneExercises: exercise.chooseOneExercises,
                 })),
               },

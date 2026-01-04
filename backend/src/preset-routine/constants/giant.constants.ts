@@ -18,6 +18,7 @@ export const GIANT_ROUTINE = {
           oneRmPct: 0.55,
           exerciseName: '벤치프레스',
           bodyPart: 'CHEST',
+          memo: '(5T2P)',
         },
         {
           order: 1,

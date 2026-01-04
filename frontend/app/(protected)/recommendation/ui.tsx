@@ -40,9 +40,9 @@ export default function RecommendationUI({
   const startWorkout = () => {
     if (!latestRoutine?.days[selectedDayIdx]) return;
     const initialSets: Record<string, boolean[]> = {};
-    // latestRoutine.days[selectedDayIdx].exercises.forEach(ex => {
-    //   initialSets[ex.id] = new Array(ex.sets).fill(false);
-    // });
+    latestRoutine.days[selectedDayIdx].subExercises.forEach(ex => {
+      initialSets[ex.id] = new Array(ex.sets).fill(false);
+    });
     setCompletedSets(initialSets);
     setIsWorkingOut(true);
   };

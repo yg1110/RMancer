@@ -368,6 +368,10 @@ export type RoutineSubExerciseResponseDto = {
      */
     chooseOneExercises?: string;
     /**
+     * 운동 메모
+     */
+    memo?: string;
+    /**
      * 생성일시
      */
     createdAt: string;
@@ -394,10 +398,6 @@ export type RoutineDayResponseDto = {
      * 요일 이름
      */
     name: string;
-    /**
-     * 운동 부위
-     */
-    bodyPart?: 'CHEST' | 'BACK' | 'LEGS' | 'SHOULDERS' | 'ARMS' | 'CORE' | 'FULL_BODY';
     /**
      * 운동 목록
      */
