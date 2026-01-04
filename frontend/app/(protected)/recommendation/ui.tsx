@@ -40,6 +40,7 @@ export default function RecommendationUI({
   );
   const [showGrowthSummary, setShowGrowthSummary] = useState(false);
   const [increased, setIncreased] = useState(0);
+  const [completedDays, setCompletedDays] = useState<Set<number>>(new Set());
 
   const currentDay = latestRoutine?.days?.[selectedDayIdx];
   const routineTitle = latestRoutine?.title || '추천 루틴';
@@ -76,6 +77,7 @@ export default function RecommendationUI({
       setIncreased(+increased);
     }
     setIsWorkingOut(false);
+    setCompletedDays(prev => new Set(prev).add(selectedDayIdx));
     setShowGrowthSummary(true);
   };
 
@@ -130,6 +132,7 @@ export default function RecommendationUI({
       <DaySelector
         days={latestRoutine.days}
         selectedDayIdx={selectedDayIdx}
+        completedDays={completedDays}
         onSelectDay={idx => {
           if (isWorkingOut) {
             toast.info('운동 중에는 운동 일정을 변경할 수 없습니다.');
@@ -166,6 +169,7 @@ export default function RecommendationUI({
           onFinish={finishWorkout}
           onCancel={cancelWorkout}
           disabled={isWorkingOut && !allSetsCompleted}
+          isDayCompleted={completedDays.has(selectedDayIdx)}
         />
       </div>
     </div>
