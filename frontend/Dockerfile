@@ -8,10 +8,13 @@
   COPY package.json pnpm-lock.yaml ./
   RUN pnpm install --frozen-lockfile
   
-  COPY . .
+  # Prisma (있다면)
+  COPY prisma ./prisma
+  RUN pnpm prisma generate
   
-  # Next build
+  COPY . .
   RUN pnpm build
+  
   
   # ---------- production stage ----------
   FROM node:20-alpine
@@ -25,12 +28,11 @@
   COPY package.json pnpm-lock.yaml ./
   RUN pnpm install --frozen-lockfile --prod
   
-  # build 결과물만 복사
+  # 🔑 builder 결과물 복사
+  COPY --from=builder /app/node_modules ./node_modules
   COPY --from=builder /app/.next ./.next
-  COPY --from=builder /app/public ./public
   COPY --from=builder /app/next.config.ts ./next.config.ts
   
   EXPOSE 3000
-  
   CMD ["pnpm", "start"]
   

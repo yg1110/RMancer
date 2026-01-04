@@ -8,8 +8,12 @@
   COPY package.json pnpm-lock.yaml ./
   RUN pnpm install --frozen-lockfile
   
+  COPY prisma ./prisma
+  RUN pnpm prisma generate
+  
   COPY . .
   RUN pnpm build
+  
   
   # ---------- production stage ----------
   FROM node:20-alpine
@@ -20,13 +24,10 @@
   
   ENV NODE_ENV=production
   
-  COPY package.json pnpm-lock.yaml ./
-  RUN pnpm install --frozen-lockfile
-  
-  COPY . .
-  
-  # Prisma Client 생성 (마지막!)
-  RUN pnpm prisma generate
+  # 🔑 builder에서 검증된 node_modules 그대로 복사
+  COPY --from=builder /app/node_modules ./node_modules
+  COPY --from=builder /app/dist ./dist
+  COPY package.json ./
   
   EXPOSE 8000
   CMD ["node", "dist/main.js"]
