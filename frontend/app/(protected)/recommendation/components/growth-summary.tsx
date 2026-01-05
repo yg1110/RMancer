@@ -22,11 +22,14 @@ export function GrowthSummary({ increased, onConfirm }: GrowthSummaryProps) {
         </p>
       </div>
       {increased > 0 && (
-        <div className="w-full bg-slate-50 rounded-[2.5rem] p-4 border border-slate-100 space-y-6">
+        <div className="w-full bg-slate-50 rounded-[2.5rem] p-8 border border-slate-100 space-y-6">
           <h3 className="font-bold text-slate-400 text-[10px] uppercase tracking-widest text-center">
-            예상 성장 수치
+            예산된 성장 수치
           </h3>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="bg-white p-4 rounded-3xl border border-slate-100 text-center">
+            <p className="text-[10px] font-bold text-slate-400 mb-1">
+              1RM 증량
+            </p>
             <div className="flex items-center justify-center gap-1 text-indigo-600 font-black">
               <span>+{increased}</span>
               <span className="text-xs">kg</span>
