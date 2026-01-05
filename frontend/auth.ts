@@ -10,7 +10,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   useSecureCookies: process.env.USE_HTTPS === 'true',
   trustHost: true,
   adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: 'credentials',
@@ -58,6 +58,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   session: {
     strategy: 'jwt',
+  },
+  jwt: {
+    encode: async ({ token, secret }) => {
+      return jwt.sign(token as jwt.JwtPayload, secret as string);
+    },
+    decode: async ({ token, secret }) => {
+      return jwt.verify(token as string, secret as string) as JWT;
+    },
   },
   pages: {},
   callbacks: {
