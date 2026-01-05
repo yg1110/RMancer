@@ -155,7 +155,7 @@ export default function ProgramSelectionUI({
                 </p>
               </div>
 
-              <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all">
+              <div className="w-8 h-8 rounded-full bg-slate-50 hidden md:flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:translate-x-0 translate-x-4 transition-all">
                 <ChevronRight className="w-4 h-4 text-slate-400" />
               </div>
             </button>

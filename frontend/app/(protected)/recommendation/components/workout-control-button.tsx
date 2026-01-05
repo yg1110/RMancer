@@ -20,7 +20,7 @@ export function WorkoutControlButton({
   isDayCompleted = false,
 }: WorkoutControlButtonProps) {
   return (
-    <div className="fixed bottom-0 left-1/2 -translate-x-1/2 max-w-md right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-200">
+    <div className="fixed w-full bottom-0 left-1/2 -translate-x-1/2 max-w-md right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-slate-200">
       <div className="max-w-md mx-auto w-full p-3">
         {!isWorkingOut ? (
           <button
