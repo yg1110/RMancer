@@ -1,6 +1,7 @@
 'use server';
 
 import {
+  dashboardControllerCreateProfileWithRecords,
   dashboardControllerGetLatestData,
   goalProfileControllerCreate,
   goalProfileControllerUpdate,
@@ -14,6 +15,7 @@ import {
 } from '@/generated/openapi-client';
 import {
   CalculateOneRmDto,
+  CreateDashboardProfileDto,
   CreateGoalProfileDto,
   CreateInbodyRecordDto,
   CreateOneRmRecordDto,
@@ -62,5 +64,13 @@ export const calculateAndUpdateOneRmRecord = async (
   body: CalculateOneRmDto,
 ) => {
   const { data, error } = await oneRmControllerCalculateAndUpdate({ body });
+  return { data, error };
+};
+export const createDashboardProfile = async (
+  body: CreateDashboardProfileDto,
+) => {
+  const { data, error } = await dashboardControllerCreateProfileWithRecords({
+    body,
+  });
   return { data, error };
 };

@@ -15,12 +15,7 @@ import {
 } from '@/shared/enums/dashboard.enum';
 import * as api from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
-import {
-  CreateGoalProfileDto,
-  CreateInbodyRecordDto,
-  CreateOneRmRecordDto,
-  UpdateGoalProfileDto,
-} from '@/generated/openapi-client';
+import { CreateDashboardProfileDto } from '@/generated/openapi-client';
 import { toast } from 'sonner';
 import Progress from './components/progress';
 import Step1 from './components/step1';
@@ -64,42 +59,9 @@ export default function DashboardUI({ isEdit }: { isEdit: boolean }) {
     overheadPress: false,
   });
 
-  const createInbodyRecordMutation = useMutation({
-    mutationFn: async (body: CreateInbodyRecordDto) => {
-      const { data } = await api.createInbodyRecord(body);
-      return data;
-    },
-    onError: error => {
-      toast.error(toErrorMessage(error));
-    },
-  });
-
-  const createGoalProfileMutation = useMutation({
-    mutationFn: async (body: CreateGoalProfileDto) => {
-      const { data, error } = await api.createGoalProfile(body);
-      if (error) throw error;
-      return data;
-    },
-    onError: error => {
-      toast.error(toErrorMessage(error));
-    },
-  });
-
-  const updateGoalProfileMutation = useMutation({
-    mutationFn: async (body: UpdateGoalProfileDto) => {
-      const { data, error } = await api.updateGoalProfile(body);
-      if (error) throw error;
-      return data;
-    },
-    onError: error => {
-      toast.error(toErrorMessage(error));
-    },
-  });
-
-  const createOneRmRecordMutation = useMutation({
-    mutationFn: async (body: CreateOneRmRecordDto) => {
-      const { data, error } = await api.createOneRmRecord(body);
-      if (error) throw error;
+  const createDashboardProfileMutation = useMutation({
+    mutationFn: async (body: CreateDashboardProfileDto) => {
+      const { data } = await api.createDashboardProfile(body);
       return data;
     },
     onError: error => {
@@ -120,44 +82,43 @@ export default function DashboardUI({ isEdit }: { isEdit: boolean }) {
     };
 
     try {
-      const profileMutation = isEdit
-        ? updateGoalProfileMutation
-        : createGoalProfileMutation;
-      // TODO 트랜잭션
-      await Promise.all([
-        profileMutation.mutateAsync({
+      // 트랜잭션을 사용하여 모든 데이터를 안전하게 저장
+      await createDashboardProfileMutation.mutateAsync({
+        goalProfile: {
           goalType: prefs.goal,
           experienceLevel: prefs.experience,
           weeklyFrequency: prefs.weeklyFrequency,
-        }),
-        createInbodyRecordMutation.mutateAsync({
+        },
+        inbodyRecord: {
           measuredAt: format(new Date(), 'yyyy-MM-dd HH:mm:ss'),
           heightCm: inBody.heightCm,
           weightKg: inBody.weightKg,
           skeletalMuscleKg: inBody.skeletalMuscleKg,
           bodyFatKg: inBody.bodyFatKg,
           bodyFatPct: inBody.bodyFatPct,
-        }),
-        createOneRmRecordMutation.mutateAsync({
-          lift: 'BENCH_PRESS',
-          oneRmKg: finalRM.benchPress,
-        }),
-        createOneRmRecordMutation.mutateAsync({
-          lift: 'DEADLIFT',
-          oneRmKg: finalRM.deadlift,
-        }),
-        createOneRmRecordMutation.mutateAsync({
-          lift: 'OVERHEAD_PRESS',
-          oneRmKg: finalRM.overheadPress,
-        }),
-        createOneRmRecordMutation.mutateAsync({
-          lift: 'BACK_SQUAT',
-          oneRmKg: finalRM.squat,
-        }),
-      ]);
+        },
+        oneRmRecords: [
+          {
+            lift: 'BENCH_PRESS',
+            oneRmKg: finalRM.benchPress,
+          },
+          {
+            lift: 'DEADLIFT',
+            oneRmKg: finalRM.deadlift,
+          },
+          {
+            lift: 'OVERHEAD_PRESS',
+            oneRmKg: finalRM.overheadPress,
+          },
+          {
+            lift: 'BACK_SQUAT',
+            oneRmKg: finalRM.squat,
+          },
+        ],
+      });
       router.push('/selection');
     } catch (error) {
-      // 에러는 각 mutation의 onError에서 처리됨
+      // 에러는 mutation의 onError에서 처리됨
     } finally {
       setLoading(false);
     }

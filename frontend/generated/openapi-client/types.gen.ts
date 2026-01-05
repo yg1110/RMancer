@@ -264,6 +264,89 @@ export type DashboardResponseDto = {
     latestOneRm: OneRmAllResponseDto | null;
 };
 
+export type GoalProfileDataDto = {
+    /**
+     * 목표 타입 (근비대/감량)
+     */
+    goalType: 'MUSCLE_GAIN' | 'FAT_LOSS';
+    /**
+     * 운동 경험치
+     */
+    experienceLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED';
+    /**
+     * 주당 운동 횟수 (3~6 권장)
+     */
+    weeklyFrequency: number;
+};
+
+export type InbodyRecordDataDto = {
+    /**
+     * 측정일/입력 기준일
+     */
+    measuredAt: string;
+    /**
+     * 키(cm)
+     */
+    heightCm: number;
+    /**
+     * 체중(kg)
+     */
+    weightKg: number;
+    /**
+     * 골격근량(kg)
+     */
+    skeletalMuscleKg: number;
+    /**
+     * 체지방량(kg)
+     */
+    bodyFatKg: number;
+    /**
+     * 체지방률(%)
+     */
+    bodyFatPct: number;
+};
+
+export type OneRmRecordDataDto = {
+    /**
+     * 운동 종류
+     */
+    lift: 'BENCH_PRESS' | 'BACK_SQUAT' | 'DEADLIFT' | 'OVERHEAD_PRESS';
+    /**
+     * 1RM 무게(kg)
+     */
+    oneRmKg: number;
+};
+
+export type CreateDashboardProfileDto = {
+    /**
+     * 목표 프로필 정보
+     */
+    goalProfile: GoalProfileDataDto;
+    /**
+     * 인바디 기록 정보
+     */
+    inbodyRecord: InbodyRecordDataDto;
+    /**
+     * 1RM 기록 목록
+     */
+    oneRmRecords: Array<OneRmRecordDataDto>;
+};
+
+export type DashboardProfileResponseDto = {
+    /**
+     * 생성/수정된 목표 프로필
+     */
+    goalProfile: GoalProfileResponseDto;
+    /**
+     * 생성된 인바디 기록
+     */
+    inbodyRecord: InbodyRecordResponseDto;
+    /**
+     * 생성된 1RM 기록 목록
+     */
+    oneRmRecords: Array<OneRmRecordResponseDto>;
+};
+
 export type CreateRoutineSubExerciseDto = {
     /**
      * 운동 순서
@@ -887,6 +970,33 @@ export type DashboardControllerGetLatestDataResponses = {
 };
 
 export type DashboardControllerGetLatestDataResponse = DashboardControllerGetLatestDataResponses[keyof DashboardControllerGetLatestDataResponses];
+
+export type DashboardControllerCreateProfileWithRecordsData = {
+    body: CreateDashboardProfileDto;
+    path?: never;
+    query?: never;
+    url: '/dashboard/profile-with-records';
+};
+
+export type DashboardControllerCreateProfileWithRecordsErrors = {
+    /**
+     * 로그인 후 이용해주세요.
+     */
+    401: unknown;
+    /**
+     * 프로필 및 기록 생성에 실패했습니다.
+     */
+    500: unknown;
+};
+
+export type DashboardControllerCreateProfileWithRecordsResponses = {
+    /**
+     * 성공적으로 생성되었습니다.
+     */
+    201: DashboardProfileResponseDto;
+};
+
+export type DashboardControllerCreateProfileWithRecordsResponse = DashboardControllerCreateProfileWithRecordsResponses[keyof DashboardControllerCreateProfileWithRecordsResponses];
 
 export type HealthControllerCheckData = {
     body?: never;
