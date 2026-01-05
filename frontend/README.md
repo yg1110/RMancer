@@ -136,7 +136,9 @@ _프로그램 선택 페이지 화면_
 
 ![추천 프로그램 페이지2](../images/recommendation2.png)
 
-![추천 프로그램 페이지3](../images/recommendation3.png) _추천 프로그램 페이지 화면_
+![추천 프로그램 페이지3](../images/recommendation3.png)
+
+_추천 프로그램 페이지 화면_
 
 **주요 기능:**
 
