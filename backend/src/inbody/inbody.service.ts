@@ -3,31 +3,29 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateInbodyRecordDto } from './dto/create-inbody-record.dto';
 import { UpdateInbodyRecordDto } from './dto/update-inbody-record.dto';
 import { InbodyRecordResponseDto } from './dto/inbody-record-response.dto';
 import { INBODY_ERROR_MESSAGE } from './inbody.constants';
+import { InbodyRepository } from './inbody.repository';
 
 @Injectable()
 export class InbodyService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly inbodyRepository: InbodyRepository) {}
 
   async create(
     userId: string,
     createDto: CreateInbodyRecordDto,
   ): Promise<InbodyRecordResponseDto> {
     try {
-      const record = await this.prisma.inbodyRecord.create({
-        data: {
-          userId,
-          measuredAt: new Date(createDto.measuredAt),
-          heightCm: createDto.heightCm,
-          weightKg: createDto.weightKg,
-          skeletalMuscleKg: createDto.skeletalMuscleKg,
-          bodyFatKg: createDto.bodyFatKg,
-          bodyFatPct: createDto.bodyFatPct,
-        },
+      const record = await this.inbodyRepository.create({
+        userId,
+        measuredAt: new Date(createDto.measuredAt),
+        heightCm: createDto.heightCm,
+        weightKg: createDto.weightKg,
+        skeletalMuscleKg: createDto.skeletalMuscleKg,
+        bodyFatKg: createDto.bodyFatKg,
+        bodyFatPct: createDto.bodyFatPct,
       });
 
       return record;
@@ -39,25 +37,11 @@ export class InbodyService {
   }
 
   async findAll(userId: string): Promise<InbodyRecordResponseDto[]> {
-    const records = await this.prisma.inbodyRecord.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        measuredAt: 'desc',
-      },
-    });
-
-    return records;
+    return this.inbodyRepository.findAllByUserId(userId);
   }
 
   async findOne(id: string, userId: string): Promise<InbodyRecordResponseDto> {
-    const record = await this.prisma.inbodyRecord.findFirst({
-      where: {
-        id,
-        userId,
-      },
-    });
+    const record = await this.inbodyRepository.findByIdAndUserId(id, userId);
 
     if (!record) {
       throw new NotFoundException(INBODY_ERROR_MESSAGE.INBODY_RECORD_NOT_FOUND);
@@ -93,12 +77,7 @@ export class InbodyService {
       updateData.bodyFatPct = updateDto.bodyFatPct;
     }
 
-    const record = await this.prisma.inbodyRecord.update({
-      where: {
-        id,
-      },
-      data: updateData,
-    });
+    const record = await this.inbodyRepository.updateById(id, updateData);
 
     return record;
   }
@@ -106,10 +85,6 @@ export class InbodyService {
   async remove(id: string, userId: string): Promise<void> {
     await this.findOne(id, userId);
 
-    await this.prisma.inbodyRecord.delete({
-      where: {
-        id,
-      },
-    });
+    await this.inbodyRepository.deleteById(id);
   }
 }

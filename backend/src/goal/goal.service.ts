@@ -1,13 +1,13 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateGoalProfileDto } from './dto/create-goal-profile.dto';
 import { UpdateGoalProfileDto } from './dto/update-goal-profile.dto';
 import { GoalProfileResponseDto } from './dto/goal-profile-response.dto';
 import { GOAL_PROFILE_ERROR_MESSAGE } from './goal.constants';
+import { GoalProfileRepository } from './goal.repository';
 
 @Injectable()
 export class GoalProfileService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly goalProfileRepository: GoalProfileRepository) {}
 
   async create(
     userId: string,
@@ -17,23 +17,21 @@ export class GoalProfileService {
 
     try {
       if (existingGoalProfile) {
-        const updatedGoalProfile = await this.prisma.goalProfile.update({
-          where: { userId },
-          data: {
+        const updatedGoalProfile = await this.goalProfileRepository.updateByUserId(
+          userId,
+          {
             goalType: createDto.goalType,
             experienceLevel: createDto.experienceLevel,
             weeklyFrequency: createDto.weeklyFrequency,
           },
-        });
+        );
         return updatedGoalProfile;
       } else {
-        const goalProfile = await this.prisma.goalProfile.create({
-          data: {
-            userId,
-            goalType: createDto.goalType,
-            experienceLevel: createDto.experienceLevel,
-            weeklyFrequency: createDto.weeklyFrequency,
-          },
+        const goalProfile = await this.goalProfileRepository.create({
+          userId,
+          goalType: createDto.goalType,
+          experienceLevel: createDto.experienceLevel,
+          weeklyFrequency: createDto.weeklyFrequency,
         });
         return goalProfile;
       }
@@ -45,13 +43,7 @@ export class GoalProfileService {
   }
 
   async findOne(userId: string): Promise<GoalProfileResponseDto | null> {
-    const goalProfile = await this.prisma.goalProfile.findUnique({
-      where: {
-        userId,
-      },
-    });
-
-    return goalProfile;
+    return this.goalProfileRepository.findByUserId(userId);
   }
 
   async update(
@@ -71,23 +63,12 @@ export class GoalProfileService {
       updateData.weeklyFrequency = updateDto.weeklyFrequency;
     }
 
-    const goalProfile = await this.prisma.goalProfile.update({
-      where: {
-        userId,
-      },
-      data: updateData,
-    });
-
-    return goalProfile;
+    return this.goalProfileRepository.updateByUserId(userId, updateData);
   }
 
   async remove(userId: string): Promise<void> {
     await this.findOne(userId);
 
-    await this.prisma.goalProfile.delete({
-      where: {
-        userId,
-      },
-    });
+    await this.goalProfileRepository.deleteByUserId(userId);
   }
 }

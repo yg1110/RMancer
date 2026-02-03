@@ -3,7 +3,6 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateOneRmRecordDto } from './dto/create-one-rm-record.dto';
 import { UpdateOneRmRecordDto } from './dto/update-one-rm-record.dto';
 import { OneRmRecordResponseDto } from './dto/one-rm-record-response.dto';
@@ -11,25 +10,24 @@ import { ONE_RM_ERROR_MESSAGE } from './one-rm.constants';
 import { OneRmLift } from '@prisma/client';
 import { OneRmAllResponseDto } from './dto/one-rm-all-response.dto';
 import { CalculateOneRmDto } from './dto/calculate-one-rm.dto';
+import { OneRmRepository } from './one-rm.repository';
 
 @Injectable()
 export class OneRmService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly oneRmRepository: OneRmRepository) {}
 
   async create(
     userId: string,
     createDto: CreateOneRmRecordDto,
   ): Promise<OneRmRecordResponseDto> {
     try {
-      const record = await this.prisma.oneRmRecord.create({
-        data: {
-          userId,
-          lift: createDto.lift,
-          oneRmKg: createDto.oneRmKg,
-          measuredAt: createDto.measuredAt
-            ? new Date(createDto.measuredAt)
-            : new Date(),
-        },
+      const record = await this.oneRmRepository.create({
+        userId,
+        lift: createDto.lift,
+        oneRmKg: createDto.oneRmKg,
+        measuredAt: createDto.measuredAt
+          ? new Date(createDto.measuredAt)
+          : new Date(),
       });
 
       return record;
@@ -44,31 +42,11 @@ export class OneRmService {
     userId: string,
     lift?: OneRmLift,
   ): Promise<OneRmRecordResponseDto[]> {
-    const where: any = {
-      userId,
-    };
-
-    if (lift) {
-      where.lift = lift;
-    }
-
-    const records = await this.prisma.oneRmRecord.findMany({
-      where,
-      orderBy: {
-        measuredAt: 'desc',
-      },
-    });
-
-    return records;
+    return this.oneRmRepository.findAllByUserId(userId, lift);
   }
 
   async findOne(id: string, userId: string): Promise<OneRmRecordResponseDto> {
-    const record = await this.prisma.oneRmRecord.findFirst({
-      where: {
-        id,
-        userId,
-      },
-    });
+    const record = await this.oneRmRepository.findByIdAndUserId(id, userId);
 
     if (!record) {
       throw new NotFoundException(ONE_RM_ERROR_MESSAGE.ONE_RM_RECORD_NOT_FOUND);
@@ -95,12 +73,7 @@ export class OneRmService {
       updateData.measuredAt = new Date(updateDto.measuredAt);
     }
 
-    const record = await this.prisma.oneRmRecord.update({
-      where: {
-        id,
-      },
-      data: updateData,
-    });
+    const record = await this.oneRmRepository.updateById(id, updateData);
 
     return record;
   }
@@ -108,11 +81,7 @@ export class OneRmService {
   async remove(id: string, userId: string): Promise<void> {
     await this.findOne(id, userId);
 
-    await this.prisma.oneRmRecord.delete({
-      where: {
-        id,
-      },
-    });
+    await this.oneRmRepository.deleteById(id);
   }
 
   async getAllOneRmObject(userId: string): Promise<OneRmAllResponseDto> {
@@ -181,15 +150,10 @@ export class OneRmService {
     );
 
     // 최신 기록 조회 (해당 lift)
-    const latestRecord = await this.prisma.oneRmRecord.findFirst({
-      where: {
-        userId,
-        lift: calculateDto.lift,
-      },
-      orderBy: {
-        measuredAt: 'desc',
-      },
-    });
+    const latestRecord = await this.oneRmRepository.findLatestByUserIdAndLift(
+      userId,
+      calculateDto.lift,
+    );
 
     // 최신 기록이 있으면 증가분 계산, 없으면 전체 리턴
     if (latestRecord) {
@@ -198,13 +162,11 @@ export class OneRmService {
       }
       const increased = +calculatedOneRm - +latestRecord.oneRmKg;
       try {
-        await this.prisma.oneRmRecord.create({
-          data: {
-            userId,
-            lift: calculateDto.lift,
-            oneRmKg: calculatedOneRm,
-            measuredAt: new Date(),
-          },
+        await this.oneRmRepository.create({
+          userId,
+          lift: calculateDto.lift,
+          oneRmKg: calculatedOneRm,
+          measuredAt: new Date(),
         });
         return increased;
       } catch (error) {
@@ -215,13 +177,11 @@ export class OneRmService {
     } else {
       // 최초 기록인 경우 전체 무게를 증가분으로 리턴
       try {
-        await this.prisma.oneRmRecord.create({
-          data: {
-            userId,
-            lift: calculateDto.lift,
-            oneRmKg: calculatedOneRm,
-            measuredAt: new Date(),
-          },
+        await this.oneRmRepository.create({
+          userId,
+          lift: calculateDto.lift,
+          oneRmKg: calculatedOneRm,
+          measuredAt: new Date(),
         });
         return +calculatedOneRm;
       } catch (error) {
